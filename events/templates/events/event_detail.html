@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <div class="banner-container">
+            <img src="{{ event.banner.url }}" alt="{{ event.slug }} banner">
+        </div>
+        <h1 class="event-title">{{ event.name }}</h1>
+    </header>
+    <main>
+        <button class="reg-bt">Register Now</button>
+        <section class="details">
+            <div class="status">
+                {{ event.status }}
+            </div>
+            <div class="date">
+                {{ event.date }}
+            </div>
+            
+            <div class="description">
+                {{ event.description }}
+            </div>
+            <div class="information">
+                <div class="btngrp">
+                    <button class="event-page-btn">Event Page</button>
+                    <button class="add-clndr-btn">Add to Calender</button>
+                </div>
+            </div>
+        </section>
+        <section class="segments">
+            {% for segment in segments %}
+                <p>{{ segment.name }} ({{ segment.type }})</p>
+            {% endfor %}
+        </section>
+    </main>
+</body>
+</html>

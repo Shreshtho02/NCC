@@ -1,3 +1,4 @@
+import os
 from django.db import models
 # from django.utils.text import slugify
 from colorfield.fields import ColorField
@@ -5,7 +6,12 @@ from django.core.exceptions import ValidationError
 from datetime import datetime
 current_year = datetime.now().year
 
-# Create your models here.
+def banner_renamer(instance,file):
+    extension = file.split('.')[-1]
+    slug = instance.slug
+    renamed_file = f"{slug}.{extension}"
+    return os.path.join('banners', renamed_file)
+
 class Event(models.Model):
     STATUS = [
         ('upcoming', 'Upcoming'),
@@ -14,7 +20,7 @@ class Event(models.Model):
     ]
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
-    banner = models.ImageField(upload_to='banners')
+    banner = models.ImageField(upload_to=banner_renamer)
     description = models.TextField()
     primary_color = ColorField(default="#FFFF00")
     status = models.CharField(max_length=10, choices=STATUS, default='upcoming')
@@ -22,8 +28,7 @@ class Event(models.Model):
 
     def __str__(self):
         return self.name
-
-
+    
 class EventSeg(models.Model):
     CATEGORIES = [
         ('all', 'For everyone'),
@@ -32,7 +37,7 @@ class EventSeg(models.Model):
     ]
     name = models.CharField(max_length=100)
     type = models.CharField(max_length=100)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='segmentset')
     fee = models.PositiveIntegerField()
     category = models.CharField(max_length=20, choices=CATEGORIES, default='students')
 
