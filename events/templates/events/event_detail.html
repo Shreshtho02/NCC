@@ -13,7 +13,7 @@
         <h1 class="event-title">{{ event.name }}</h1>
     </header>
     <main>
-        <button class="reg-bt">Register Now</button>
+        <a href="{% url 'event_register' event.slug %}"><button class="reg-bt">Register Now</button></a>
         <section class="details">
             <div class="status">
                 {{ event.status }}
@@ -34,7 +34,7 @@
         </section>
         <section class="segments">
             {% for segment in segments %}
-                <p>{{ segment.name }} ({{ segment.type }})</p>
+                <p>{{ segment.name }} ({{ segment.type }}) — ৳{{ segment.fee }}</p>
             {% endfor %}
         </section>
     </main>
