@@ -1,0 +1,28 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Quicksand:wght@500;700&family=Shadows+Into+Light+Two&family=SUSE:wght@400;600&display=swap');
+
+@theme {
+    /* fonts */
+    --font-quicksand: "Quicksand", sans-serif;
+    --font-suse: "SUSE", sans-serif;
+    --font-silt: "Shadows Into Light Two", cursive;
+    --font-grotesk: "Space Grotesk", sans-serif;
+
+    /* raw palette */
+    --color-black: #000000;
+    --color-shadow-grey: #221e22;
+    --color-amaranth: #D1495B;
+    --color-slate-grey: #7c90a0;
+    --color-ghost-white: #fffaff;
+
+    /* semantic roles — what templates actually use */
+    --color-bg: var(--color-shadow-grey);
+    --color-surface: var(--color-black);
+    --color-text: var(--color-ghost-white);
+    --color-text-muted: var(--color-slate-grey);
+    --color-accent: var(--color-amaranth);
+}
+
+body {
+    font-family: var(--font-suse);
+}

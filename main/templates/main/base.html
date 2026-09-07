@@ -1,24 +1,70 @@
 <!DOCTYPE html>
+{% load static tailwind_cli %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% tailwind_css %}
     <title>{% block title %}Shreshtho's Website{% endblock %}</title>
 </head>
-<body>
-    <nav>
-        <a href="/">Home</a>
-        <a href="/about">About</a>
-        <a href="/events">Events</a>
+<body class="bg-bg text-text font-quicksand font-bold pt-16">
+
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-bg/95 backdrop-blur border-b border-text-muted/15">
+        <div class="flex items-center justify-between px-4 md:px-8 py-3 max-w-6xl mx-auto">
+
+            <a href="{% url 'homepage' %}" class="flex items-center gap-2">
+                <img src="{% static 'logo/darkmode.webp' %}" alt="GSCCC" class="h-7 w-7 object-contain">
+                <span class="font-grotesk text-sm tracking-wide">GSCCC</span>
+            </a>
+
+            <div class="hidden md:flex items-center gap-8 text-sm">
+                <a href="{% url 'homepage' %}" class="hover:text-accent transition">Home</a>
+                <a href="{% url 'event_list' %}" class="hover:text-accent transition">Events</a>
+                <a href="{% url 'aboutpage' %}" class="hover:text-accent transition">About</a>
+                <a href="{% url 'event_detail' 'ncc' %}" class="hover:text-accent transition">NCC</a>
+            </div>
+
+            <button id="nav-toggle" aria-label="Toggle menu" aria-expanded="false"
+                    class="md:hidden flex flex-col gap-1.5 p-2 -mr-2">
+                <span class="block w-6 h-0.5 bg-text transition"></span>
+                <span class="block w-6 h-0.5 bg-text transition"></span>
+                <span class="block w-6 h-0.5 bg-text transition"></span>
+            </button>
+
+        </div>
+
+        <div id="nav-menu" class="hidden md:hidden flex-col gap-1 px-4 pb-4 text-sm">
+            <a href="{% url 'homepage' %}" class="block py-2 hover:text-accent transition">Home</a>
+            <a href="{% url 'event_list' %}" class="block py-2 hover:text-accent transition">Events</a>
+            <a href="{% url 'aboutpage' %}" class="block py-2 hover:text-accent transition">About</a>
+            <a href="{% url 'event_detail' 'ncc' %}" class="block py-2 hover:text-accent transition">NCC</a>
+        </div>
     </nav>
 
-    <main>
-
+    <main class="min-h-[70vh]">
         {% block content %}
         {% endblock %}
-
     </main>
 
-    <footer>&copy 2026 Shreshtho's Website</footer>
+    <footer class="border-t border-text-muted/15 mt-20">
+        <div class="max-w-6xl mx-auto px-4 md:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-text-muted font-normal">
+            <p>&copy; 2026 Government Science College Cultural Club</p>
+            <div class="flex gap-6">
+                <a href="{% url 'event_list' %}" class="hover:text-text transition">Events</a>
+                <a href="{% url 'aboutpage' %}" class="hover:text-text transition">About</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const toggle = document.getElementById('nav-toggle');
+        const menu = document.getElementById('nav-menu');
+        toggle.addEventListener('click', () => {
+            const isOpen = menu.classList.toggle('flex');
+            menu.classList.toggle('hidden');
+            toggle.setAttribute('aria-expanded', isOpen);
+        });
+    </script>
+
 </body>
 </html>

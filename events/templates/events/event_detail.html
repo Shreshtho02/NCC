@@ -1,42 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <header>
-        <div class="banner-container">
-            <img src="{{ event.banner.url }}" alt="{{ event.slug }} banner">
-        </div>
-        <h1 class="event-title">{{ event.name }}</h1>
-    </header>
-    <main>
-        <a href="{% url 'event_register' event.slug %}"><button class="reg-bt">Register Now</button></a>
-        <section class="details">
-            <div class="status">
+{% extends "main/base.html" %}
+
+{% block title %}{{ event.name }}{% endblock %}
+
+{% block content %}
+<div style="--event-accent: {{ event.primary_color }};">
+
+<section class="my-4 flex flex-row justify-center gap-4">
+    <p class="text-9xl">
+        2<span class="align-super align-top text-4xl">nd</span> National
+    </p>
+    <p class="text-6xl">Cultural<br>Carnival</p>
+</section>
+
+<section class="flex flex-row">
+    <div class="m-20 py-20 flex flex-col gap-4">
+        <a href="{% url 'event_register' event.slug %}" class="flex-1">
+            <button class="reg-bt w-full bg-[var(--event-accent)] text-surface font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition">
+                Register Now
+            </button>
+        </a>
+        <button class="event-page-btn flex-1 border border-text-muted/40 text-text px-6 py-3 rounded-xl hover:border-[var(--event-accent)] hover:text-[var(--event-accent)] transition">
+            Click for details
+        </button>
+    </div>
+    <div class="flex-1 rounded-2xl overflow-hidden bg-surface">
+        {% if event.banner %}
+            <img src="{{ event.banner.url }}" alt="{{ event.name }} banner"
+                 class="w-full h-full object-cover">
+        {% else %}
+            <div class="w-full aspect-video flex items-center justify-center text-text-muted">
+                No banner uploaded
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="px-6 pb-12 md:px-16">
+
+    <section class="bg-surface rounded-2xl p-6 md:p-8 flex flex-col gap-6 mt-8">
+
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <span class="uppercase text-xs tracking-widest text-text-muted border border-[var(--event-accent)]/50 rounded-full px-3 py-1">
                 {{ event.status }}
-            </div>
-            <div class="date">
+            </span>
+            <span class="date text-text-muted text-sm">
                 {{ event.date }}
-            </div>
-            
-            <div class="description">
-                {{ event.description }}
-            </div>
-            <div class="information">
-                <div class="btngrp">
-                    <button class="event-page-btn">Event Page</button>
-                    <button class="add-clndr-btn">Add to Calender</button>
-                </div>
-            </div>
-        </section>
-        <section class="segments">
-            {% for segment in segments %}
-                <p>{{ segment.name }} ({{ segment.type }}) — ৳{{ segment.fee }}</p>
-            {% endfor %}
-        </section>
-    </main>
-</body>
-</html>
+            </span>
+        </div>
+
+        <p class="description text-text leading-relaxed">
+            {{ event.description }}
+        </p>
+
+        <div class="information flex flex-wrap items-center gap-3 pt-2">
+            <button class="add-clndr-btn border border-text-muted/40 text-text px-4 py-2 rounded-xl hover:border-[var(--event-accent)] hover:text-[var(--event-accent)] transition">
+                Add to Calendar
+            </button>
+        </div>
+
+    </section>
+
+    <section class="segments mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {% for segment in segments %}
+        <div class="bg-surface rounded-xl p-4 border border-text-muted/20 hover:border-[var(--event-accent)]/50 transition">
+            <p class="text-text font-medium">{{ segment.name }}</p>
+            <p class="text-text-muted text-sm">{{ segment.type }}</p>
+            <p class="text-[var(--event-accent)] font-semibold mt-2">৳{{ segment.fee }}</p>
+        </div>
+        {% endfor %}
+    </section>
+
+</section>
+
+</div>
+{% endblock %}
