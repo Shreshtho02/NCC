@@ -5,70 +5,92 @@
 {% block content %}
 <div style="--event-accent: {{ event.primary_color }};">
 
-<section class="my-4 flex flex-row justify-center gap-4">
-    <p class="text-9xl">
-        2<span class="align-super align-top text-4xl">nd</span> National
-    </p>
-    <p class="text-6xl">Cultural<br>Carnival</p>
-</section>
+<section class="relative overflow-hidden border-b-[3px] border-paper px-6 md:px-16 pt-16 pb-24">
 
-<section class="flex flex-row">
-    <div class="m-20 py-20 flex flex-col gap-4">
-        <a href="{% url 'event_register' event.slug %}" class="flex-1">
-            <button class="reg-bt w-full bg-[var(--event-accent)] text-surface font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition">
-                Register Now
-            </button>
-        </a>
-        <button class="event-page-btn flex-1 border border-text-muted/40 text-text px-6 py-3 rounded-xl hover:border-[var(--event-accent)] hover:text-[var(--event-accent)] transition">
-            Click for details
-        </button>
-    </div>
-    <div class="flex-1 rounded-2xl overflow-hidden bg-surface">
-        {% if event.banner %}
-            <img src="{{ event.banner.url }}" alt="{{ event.name }} banner"
-                 class="w-full h-full object-cover">
-        {% else %}
-            <div class="w-full aspect-video flex items-center justify-center text-text-muted">
-                No banner uploaded
+    <span class="absolute top-4 left-4 font-mono text-paper/25 text-lg">+</span>
+    <span class="absolute top-4 right-4 font-mono text-paper/25 text-lg">+</span>
+    <span class="absolute bottom-4 left-4 font-mono text-paper/25 text-lg">+</span>
+
+    <span class="pointer-events-none select-none absolute -top-10 -left-4 md:-left-10 font-display font-black leading-none text-paper/5 text-[32vw]">
+        2
+    </span>
+
+    <div class="pointer-events-none absolute inset-y-0 right-[-15%] w-[50%] -skew-x-12 origin-top-right"
+         style="background: var(--event-accent); opacity: 0.1;"></div>
+
+    <div class="relative grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-14 items-end">
+
+        <div class="relative z-10">
+            <p class="font-mono text-xs uppercase tracking-widest mb-4" style="color: var(--event-accent);">
+                {{ event.status }} — {{ event.date }}
+            </p>
+
+            <h1 class="font-display font-black uppercase leading-[0.86] tracking-tight mb-9 text-[clamp(2.2rem,5.2vw,4.4rem)]">
+                <span class="block">2<sup class="text-[0.4em] align-super">nd</sup> National</span>
+                <span class="block" style="color: var(--event-accent);">Cultural Carnival</span>
+            </h1>
+
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="{% url 'event_register' event.slug %}" class="flex-1">
+                    <button class="btn w-full font-display font-bold bg-[var(--event-accent)] border-[var(--event-accent)] text-ink"
+                            style="box-shadow: 7px 7px 0 var(--color-paper);">
+                        Register
+                    </button>
+                </a>
+                <a href="#details" class="flex-1">
+                    <button class="btn w-full font-display font-bold" style="box-shadow: 7px 7px 0 var(--event-accent);">
+                        Details
+                    </button>
+                </a>
             </div>
-        {% endif %}
-    </div>
-</section>
+        </div>
 
-<section class="px-6 pb-12 md:px-16">
-
-    <section class="bg-surface rounded-2xl p-6 md:p-8 flex flex-col gap-6 mt-8">
-
-        <div class="flex flex-wrap items-center justify-between gap-4">
-            <span class="uppercase text-xs tracking-widest text-text-muted border border-[var(--event-accent)]/50 rounded-full px-3 py-1">
-                {{ event.status }}
-            </span>
-            <span class="date text-text-muted text-sm">
+        <div class="relative">
+            <span class="absolute -top-5 -right-5 z-20 font-mono text-xs uppercase border-2 px-3 py-2 -rotate-6 bg-ink"
+                  style="border-color: var(--event-accent); color: var(--event-accent);">
                 {{ event.date }}
             </span>
+
+            <div class="relative rotate-[-1.5deg] border-[3px] border-paper aspect-video overflow-hidden"
+                 style="box-shadow: 10px 10px 0 var(--event-accent);">
+                {% if event.banner %}
+                    <img src="{{ event.banner.url }}" alt="{{ event.name }} banner"
+                         class="w-full h-full object-cover">
+                {% else %}
+                    <div class="w-full h-full flex items-center justify-center font-mono text-xs uppercase text-paper/70"
+                         style="background: repeating-linear-gradient(45deg,#17171a,#17171a 12px,var(--color-ink) 12px,var(--color-ink) 24px);">
+                        No banner uploaded
+                    </div>
+                {% endif %}
+            </div>
         </div>
 
-        <p class="description text-text leading-relaxed">
+    </div>
+</section>
+
+<section class="px-6 md:px-16 pt-12" id="details">
+
+    <div class="border-[3px] border-paper p-8">
+        <p class="font-body leading-relaxed max-w-[62ch] mb-6">
             {{ event.description }}
         </p>
+        <button class="btn w-full font-display font-bold" style="box-shadow: 7px 7px 0 var(--event-accent);">
+            Add to Calendar
+        </button>
+    </div>
 
-        <div class="information flex flex-wrap items-center gap-3 pt-2">
-            <button class="add-clndr-btn border border-text-muted/40 text-text px-4 py-2 rounded-xl hover:border-[var(--event-accent)] hover:text-[var(--event-accent)] transition">
-                Add to Calendar
-            </button>
-        </div>
-
-    </section>
-
-    <section class="segments mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-10 border-t-2 border-paper mb-16">
         {% for segment in segments %}
-        <div class="bg-surface rounded-xl p-4 border border-text-muted/20 hover:border-[var(--event-accent)]/50 transition">
-            <p class="text-text font-medium">{{ segment.name }}</p>
-            <p class="text-text-muted text-sm">{{ segment.type }}</p>
-            <p class="text-[var(--event-accent)] font-semibold mt-2">৳{{ segment.fee }}</p>
+        <div class="grid grid-cols-[70px_1fr_auto_auto] items-center gap-4 py-5 border-b-2 border-paper">
+            <span class="font-mono text-2xl font-bold leading-none" style="color: var(--event-accent);">
+                {{ forloop.counter|stringformat:"02d" }}
+            </span>
+            <span class="font-display font-semibold uppercase text-lg">{{ segment.name }}</span>
+            <span class="font-mono text-xs uppercase text-right">{{ segment.type }}</span>
+            <span class="font-display font-bold text-right min-w-[70px]">৳{{ segment.fee }}</span>
         </div>
         {% endfor %}
-    </section>
+    </div>
 
 </section>
 

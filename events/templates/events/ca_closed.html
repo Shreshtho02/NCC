@@ -1,0 +1,14 @@
+{% extends "main/base.html" %}
+
+{% block title %}Campus Ambassador — {{ event.name }}{% endblock %}
+
+{% block content %}
+<section class="bg-bg px-6 py-20 text-center">
+    <h1 class="font-grotesk text-3xl font-bold text-text mb-4">
+        CA Registration Isn't Open
+    </h1>
+    <p class="text-text-muted">
+        There's no open Campus Ambassador batch for {{ event.name }} right now. Check back soon.
+    </p>
+</section>
+{% endblock %}

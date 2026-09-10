@@ -7,37 +7,49 @@
     {% tailwind_css %}
     <title>{% block title %}Shreshtho's Website{% endblock %}</title>
 </head>
-<body class="bg-bg text-text font-quicksand font-bold pt-16">
-
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-bg/95 backdrop-blur border-b border-text-muted/15">
-        <div class="flex items-center justify-between px-4 md:px-8 py-3 max-w-6xl mx-auto">
-
-            <a href="{% url 'homepage' %}" class="flex items-center gap-2">
-                <img src="{% static 'logo/darkmode.webp' %}" alt="GSCCC" class="h-7 w-7 object-contain">
-                <span class="font-grotesk text-sm tracking-wide">GSCCC</span>
-            </a>
-
-            <div class="hidden md:flex items-center gap-8 text-sm">
-                <a href="{% url 'homepage' %}" class="hover:text-accent transition">Home</a>
-                <a href="{% url 'event_list' %}" class="hover:text-accent transition">Events</a>
-                <a href="{% url 'aboutpage' %}" class="hover:text-accent transition">About</a>
-                <a href="{% url 'event_detail' 'ncc' %}" class="hover:text-accent transition">NCC</a>
+<body class="bg-ink text-paper font-mono">
+    <nav class="sticky top-0 z-50 bg-ink border-b-[3px] border-paper">
+        <div class="flex items-center justify-between px-6 md:px-16 py-4">
+    
+            <div class="flex items-center gap-10">
+                <a href="{% url 'homepage' %}" class="font-display font-black text-2xl tracking-tight">
+                    GSCCC<span style="color: var(--color-accent);">.</span>
+                </a>
+    
+                <div class="hidden md:flex items-center gap-8 font-mono text-sm uppercase tracking-wide">
+                    <a href="{% url 'event_list' %}" class="hover:text-[var(--color-accent)] transition-colors">Events</a>
+                    <a href="{% url 'aboutpage' %}" class="hover:text-[var(--color-accent)] transition-colors">About</a>
+                </div>
             </div>
-
-            <button id="nav-toggle" aria-label="Toggle menu" aria-expanded="false"
-                    class="md:hidden flex flex-col gap-1.5 p-2 -mr-2">
-                <span class="block w-6 h-0.5 bg-text transition"></span>
-                <span class="block w-6 h-0.5 bg-text transition"></span>
-                <span class="block w-6 h-0.5 bg-text transition"></span>
+    
+            <div class="hidden md:flex items-center gap-6">
+                <span class="w-[2px] h-6 bg-paper/30"></span>
+                <a href="{% url 'event_detail' 'ncc' %}">
+                    <button class="btn relative overflow-hidden font-display font-bold text-xs py-2.5 px-5"
+                            style="background: var(--color-accent); border-color: var(--color-accent); color: var(--color-ink); box-shadow: 5px 5px 0 var(--color-paper);">
+                        <span class="relative z-10">Register for NCC</span>
+                        <span class="animate-shimmer pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-paper/40"></span>
+                    </button>
+                </a>
+            </div>
+    
+            <button id="nav-toggle" class="md:hidden flex flex-col gap-1.5 border-2 border-paper p-2" aria-label="Toggle menu" aria-expanded="false">
+                <span class="block w-5 h-0.5 bg-paper"></span>
+                <span class="block w-5 h-0.5 bg-paper"></span>
+                <span class="block w-5 h-0.5 bg-paper"></span>
             </button>
-
+    
         </div>
-
-        <div id="nav-menu" class="hidden md:hidden flex-col gap-1 px-4 pb-4 text-sm">
-            <a href="{% url 'homepage' %}" class="block py-2 hover:text-accent transition">Home</a>
-            <a href="{% url 'event_list' %}" class="block py-2 hover:text-accent transition">Events</a>
-            <a href="{% url 'aboutpage' %}" class="block py-2 hover:text-accent transition">About</a>
-            <a href="{% url 'event_detail' 'ncc' %}" class="block py-2 hover:text-accent transition">NCC</a>
+    
+        <div id="mobile-menu" class="hidden md:hidden flex-col font-mono uppercase text-sm px-6 pb-5">
+            <a href="{% url 'event_list' %}" class="py-3 border-t-2 border-paper">Events</a>
+            <a href="{% url 'aboutpage' %}" class="py-3 border-t-2 border-paper">About</a>
+            <a href="{% url 'event_register' 'ncc' %}" class="pt-4">
+                <button class="btn w-full font-display font-bold text-xs"
+                        style="background: var(--color-accent); border-color: var(--color-accent); color: var(--color-ink); box-shadow: 5px 5px 0 var(--color-paper);">
+                    Register
+                </button>
+            </a>
         </div>
     </nav>
 

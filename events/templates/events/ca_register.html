@@ -1,0 +1,44 @@
+{% extends "main/base.html" %}
+
+{% block title %}Campus Ambassador — {{ event.name }}{% endblock %}
+
+{% block content %}
+<div style="--event-accent: {{ event.primary_color }};">
+
+<section class="bg-bg px-6 py-12 md:px-16 max-w-2xl mx-auto">
+
+    <h1 class="font-grotesk text-3xl md:text-4xl font-bold text-text mb-8">
+        Become a Campus Ambassador — {{ event.name }}
+    </h1>
+
+    <form method="POST" enctype="multipart/form-data" class="bg-surface rounded-2xl p-6 md:p-8 flex flex-col gap-5">
+        {% csrf_token %}
+
+        {% for field in form %}
+        <div class="flex flex-col gap-1.5">
+            <label for="{{ field.id_for_label }}" class="text-text text-sm font-medium">
+                {{ field.label }}
+            </label>
+
+            {{ field }}
+
+            {% if field.help_text %}
+                <p class="text-text-muted text-xs">{{ field.help_text }}</p>
+            {% endif %}
+
+            {% for error in field.errors %}
+                <p class="text-red-400 text-xs">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <button type="submit"
+                class="mt-2 bg-[var(--event-accent)] text-surface font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition">
+            Submit Application
+        </button>
+    </form>
+
+</section>
+
+</div>
+{% endblock %}

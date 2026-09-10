@@ -1,5 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Nata+Sans:wght@100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Quicksand:wght@500;700&family=Shadows+Into+Light+Two&family=SUSE:wght@400;600&display=swap');
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+select,
+textarea {
+    background: var(--color-ink);
+    border: 2px solid var(--color-paper);
+    color: var(--color-paper);
+    padding: 12px 14px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    width: 100%;
+    border-radius: 0;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+textarea { resize: vertical; min-height: 90px; }
+
+input[type="checkbox"] {
+    accent-color: var(--color-accent);
+    width: 16px;
+    height: 16px;
+}
+
+@theme {
+    --animate-shimmer: shimmer-sweep 2.6s ease-in-out infinite;
+}
+
+@keyframes shimmer-sweep {
+    0%   { transform: translateX(-130%) skewX(-20deg); }
+    55%  { transform: translateX(160%) skewX(-20deg); }
+    100% { transform: translateX(160%) skewX(-20deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-shimmer { animation: none; }
+}
+
+@theme {
+    --font-display: "Nata Sans", sans-serif;
+    --font-body: "Nata Sans", sans-serif;
+    --font-mono: "Space Mono", monospace;
+    --color-ink: #0A0A0C;
+    --color-paper: #F4EDE2;
+    --color-accent: #8B5CF6;
+}
+
+body {
+    font-family: var(--font-body);
+}
+
+@utility btn {
+    @apply inline-flex items-center justify-center gap-2 font-mono font-bold uppercase text-sm tracking-wide px-7 py-4 border-[3px] border-paper bg-ink text-paper cursor-pointer transition-transform duration-100;
+    box-shadow: 7px 7px 0 var(--color-accent);
+}
+@utility btn-hover-push {
+    &:hover { transform: translate(7px, 7px); box-shadow: 0 0 0 var(--color-accent); }
+}
+@utility card-hard {
+    @apply border-[3px] border-paper bg-ink transition-transform duration-100;
+    box-shadow: 7px 7px 0 var(--card-accent, var(--color-accent));
+}
+
 
 @theme {
     /* fonts */
@@ -24,5 +93,6 @@
 }
 
 body {
-    font-family: var(--font-suse);
+    background-color: var(--color-ink);
+    background-image: repeating-linear-gradient(45deg, rgba(244,237,226,0.05) 0 2px, transparent 2px 14px);
 }

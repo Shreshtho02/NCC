@@ -2,7 +2,16 @@ from django.contrib import admin
 from .models import *
 # Register your models here.
 
-admin.site.register(Event)
+class EligibilityInline(admin.TabularInline):
+    model = Eligibility
+    extra = 1
+
+class EventAdmin(admin.ModelAdmin):
+    inlines = [EligibilityInline]
+
+admin.site.register(Event, EventAdmin)
 admin.site.register(EventSeg)
-admin.site.register(ClassRange)
-admin.site.register(Registration)
+admin.site.register(Eligibility)
+admin.site.register(Participant)
+admin.site.register(CABatch)
+admin.site.register(CampusAmbassador)

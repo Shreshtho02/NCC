@@ -1,0 +1,75 @@
+{% extends "main/base.html" %}
+
+{% block title %}Registered — {{ event.name }}{% endblock %}
+
+{% block content %}
+<div style="--event-accent: {{ event.primary_color }};">
+
+<section class="px-6 md:px-16 pt-16 pb-24 max-w-2xl mx-auto">
+
+    <p class="font-mono text-xs uppercase tracking-widest mb-4" style="color: var(--event-accent);">
+        Registration confirmed
+    </p>
+
+    <h1 class="font-display font-black uppercase leading-[0.9] tracking-tight text-[clamp(1.8rem,4.5vw,3rem)] mb-3">
+        You're in, {{ registration.name }}.
+    </h1>
+
+    <p class="font-mono text-sm text-paper/70 mb-10">
+        Registration for {{ event.name }} — status is
+        <span style="color: var(--event-accent);">{{ registration.get_status_display }}</span>
+        until we verify your payment.
+    </p>
+
+    <div class="border-[3px] border-paper p-6 md:p-8 flex flex-col gap-6">
+
+        <div class="flex justify-between items-center border-b-2 border-paper pb-4">
+            <span class="font-mono text-xs uppercase tracking-wide text-paper/60">Transaction ID</span>
+            <span class="font-mono text-sm">{{ registration.trxid }}</span>
+        </div>
+
+        <div class="flex justify-between items-center border-b-2 border-paper pb-4">
+            <span class="font-mono text-xs uppercase tracking-wide text-paper/60">Email</span>
+            <span class="font-mono text-sm">{{ registration.email }}</span>
+        </div>
+
+        <div class="flex justify-between items-center border-b-2 border-paper pb-4">
+            <span class="font-mono text-xs uppercase tracking-wide text-paper/60">Payment method</span>
+            <span class="font-mono text-sm">{{ registration.get_paymeth_display }} — {{ registration.paynum }}</span>
+        </div>
+
+        <div>
+            <span class="font-mono text-xs uppercase tracking-wide text-paper/60 block mb-3">Segments</span>
+            {% for segment in segments %}
+            <div class="flex justify-between items-center py-2 {% if not forloop.last %}border-b border-paper/30{% endif %}">
+                <span class="font-display uppercase text-sm">{{ segment.name }}</span>
+                <span class="font-mono text-sm">৳{{ segment.fee }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="flex justify-between items-center pt-4 border-t-2 border-paper">
+            <span class="font-display font-bold uppercase">Total</span>
+            <span class="font-display font-black text-xl" style="color: var(--event-accent);">৳{{ total_fee }}</span>
+        </div>
+
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-4 mt-8">
+        <a href="{% url 'registration_receipt' token %}" class="flex-1">
+            <button class="btn w-full font-display font-bold"
+                    style="background: var(--event-accent); border-color: var(--event-accent); color: var(--color-ink); box-shadow: 7px 7px 0 var(--color-paper);">
+                Download Receipt
+            </button>
+        </a>
+        <a href="{% url 'event_detail' event.slug %}" class="flex-1">
+            <button class="btn w-full font-display font-bold" style="box-shadow: 7px 7px 0 var(--event-accent);">
+                Back to Event
+            </button>
+        </a>
+    </div>
+
+</section>
+
+</div>
+{% endblock %}
