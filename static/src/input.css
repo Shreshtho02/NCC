@@ -54,8 +54,87 @@ input[type="checkbox"] {
     --color-accent-soft: #C4B5FD;
 }
 
+@media (hover: hover) and (pointer: fine) {
+    body { cursor: none; }
+    a, button, [role="button"] { cursor: none; }
+
+    .cursor-el {
+        position: fixed; top: 0; left: 0;
+        pointer-events: none; z-index: 9999;
+        transform: translate(-50%, -50%);
+        will-change: transform;
+    }
+    #cursor-dot {
+        width: 6px; height: 6px; border-radius: 9999px;
+        background: var(--color-accent);
+        transition: opacity 0.2s ease;
+    }
+    #cursor-ring {
+        width: 34px; height: 34px; border-radius: 9999px;
+        border: 1px solid color-mix(in srgb, var(--color-ghost-white) 40%, transparent);
+        transition: width 0.25s cubic-bezier(0.16,1,0.3,1), height 0.25s cubic-bezier(0.16,1,0.3,1),
+                    border-color 0.25s ease, background-color 0.25s ease;
+    }
+    #cursor-ring.is-active {
+        width: 60px; height: 60px;
+        background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+        border-color: var(--color-accent);
+    }
+    #cursor-ring.is-text::after {
+        content: attr(data-label);
+        font-family: var(--font-grotesk);
+        font-size: 0.7rem;
+        color: var(--color-ghost-white);
+    }
+}
+
 body {
     font-family: var(--font-body);
+}
+
+@layer components {
+    .btn-solid {
+        @apply relative inline-flex items-center justify-center px-7 py-3.5 rounded-xl
+               font-semibold text-white bg-accent overflow-hidden transition-transform duration-300;
+    }
+    .btn-solid::before {
+        content: ''; position: absolute; inset: 0;
+        background: color-mix(in srgb, black 15%, var(--color-accent));
+        transform: translateY(101%);
+        transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .btn-solid:hover::before { transform: translateY(0); }
+    .btn-solid span { position: relative; z-index: 1; }
+
+    .btn-outline {
+        @apply relative inline-flex items-center justify-center px-7 py-3.5 rounded-xl
+               font-semibold text-text border border-text-muted/40 overflow-hidden;
+    }
+    .btn-outline::before {
+        content: ''; position: absolute; inset: 0;
+        background: var(--color-accent);
+        transform: scaleX(0); transform-origin: left;
+        transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+        z-index: 0;
+    }
+    .btn-outline:hover::before { transform: scaleX(1); }
+    .btn-outline:hover { color: white; border-color: transparent; }
+    .btn-outline span { position: relative; z-index: 1; }
+
+    .link-underline {
+        @apply relative text-text transition-colors;
+        background-image: linear-gradient(var(--color-accent), var(--color-accent));
+        background-size: 0% 1px;
+        background-position: left bottom;
+        background-repeat: no-repeat;
+        transition: background-size 0.3s cubic-bezier(0.16,1,0.3,1), color 0.3s ease;
+    }
+    .link-underline:hover { background-size: 100% 1px; color: var(--color-accent); }
+
+    .chip {
+        @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+               border border-text-muted/30 text-text-muted;
+    }
 }
 
 @utility hero-glow {

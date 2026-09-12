@@ -1,84 +1,178 @@
 {% extends "main/base.html" %}
+{% load static %}
 
 {% block title %}GSCCC — Home{% endblock %}
 
 {% block content %}
+<style>
+    @keyframes fade-up { from{opacity:0;transform:translateY(28px);} to{opacity:1;transform:translateY(0);} }
+    @keyframes drift { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-14px);} }
+    .reveal { opacity:0; }
+    .reveal.in { animation: fade-up 0.8s cubic-bezier(0.16,1,0.3,1) forwards; }
 
-<section class="px-6 md:px-16 pt-10 pb-16 md:py-24 max-w-6xl mx-auto">
-    <div class="flex flex-col md:flex-row items-start justify-between gap-10">
-        <div class="flex-1 max-w-2xl">
-            <h1 class="font-grotesk font-bold text-4xl md:text-6xl leading-snug text-text">
-                The stage, the page,<br>and everything between.
+    .tilt-stage { perspective: 1400px; }
+    .tilt-el { transition: transform 0.15s ease-out; transform-style: preserve-3d; will-change: transform; }
+    .tilt-ring {
+        position: absolute; inset: -18%; border-radius: 9999px;
+        background: radial-gradient(circle, color-mix(in srgb, var(--color-accent) 35%, transparent) 0%, transparent 70%);
+        transform: translateZ(-60px); animation: drift 6s ease-in-out infinite;
+    }
+
+    .dept-list:has(.dept-item:hover) .dept-item:not(:hover) { opacity: 0.35; }
+    .dept-item { transition: opacity 0.35s ease, padding-left 0.35s ease; }
+    .dept-item:hover { padding-left: 1.5rem; }
+
+    .slide { opacity: 0; transition: opacity 1.2s ease; }
+    .slide.active { opacity: 1; }
+
+    @media (prefers-reduced-motion: reduce) {
+        .reveal { opacity: 1; animation: none; }
+        .tilt-el { transition: none; }
+        .tilt-ring { animation: none; }
+    }
+</style>
+
+<!-- 1. HERO -->
+<section class="relative min-h-screen flex items-center border-b border-text-muted/15 overflow-hidden">
+    <div class="w-full px-6 md:px-12 lg:px-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-center pt-16">
+
+        <div>
+            <h1 class="font-grotesk font-bold text-text text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.95]">
+                Government<br>Science College<br><span class="text-accent">Cultural Club</span>
             </h1>
-            <p class="font-silt text-2xl text-accent mt-2">— since the college had a stage worth using</p>
-            <p class="text-text-muted mt-6 text-lg font-normal leading-relaxed">
-                GSCCC organizes the performances, competitions, and creative events
-                that make up Government Science College's cultural life — run
-                entirely by students.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 mt-8">
-                <a href="{% url 'event_detail' 'ncc' %}"
-                   class="bg-accent text-white font-semibold px-6 py-3 rounded-xl text-center hover:opacity-90 transition">
-                    See NCC 2026
-                </a>
-                <a href="{% url 'event_list' %}"
-                   class="border border-text-muted/40 text-text px-6 py-3 rounded-xl text-center hover:border-accent hover:text-accent transition">
-                    Browse all events
-                </a>
+            <p class="font-silt text-2xl text-text-muted mt-4">the college's creative pulse, run by its own students</p>
+            <div class="flex gap-4 mt-8">
+                <a href="{% url 'event_list' %}" class="bg-accent text-white font-semibold px-7 py-3.5 rounded-xl hover:opacity-90 transition">Browse events</a>
+                <a href="#committee" class="border border-text-muted/40 text-text px-7 py-3.5 rounded-xl hover:border-accent hover:text-accent transition">Meet the committee</a>
             </div>
         </div>
 
-        <img src="/media/logo/logo.webp" alt="GSCCC logo"
-             class="w-28 md:w-40 h-auto opacity-90 self-center md:self-start">
+        <div class="tilt-stage flex justify-center md:justify-end">
+            <div id="logo-tilt" class="tilt-el relative w-56 md:w-72">
+                <div class="tilt-ring"></div>
+                <img src="{% static 'logo/logo.webp' %}" alt="GSCCC logo" class="relative w-full h-auto drop-shadow-2xl">
+            </div>
+        </div>
+    </div>
+
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-text-muted text-xs tracking-wide animate-bounce">scroll</div>
+</section>
+
+<!-- 2. DEPARTMENTS -->
+<section class="min-h-screen flex flex-col justify-center border-b border-text-muted/15 px-6 md:px-12 lg:px-20 py-20">
+    <p class="text-text-muted text-sm font-medium mb-8">What keeps the club running</p>
+    <div class="dept-list divide-y divide-text-muted/15">
+        {% for dept in departments %}
+        <div class="dept-item flex items-center justify-between py-5 md:py-7">
+            <h3 class="font-grotesk font-bold text-text text-2xl md:text-4xl">{{ dept.name }}</h3>
+            <p class="hidden md:block text-text-muted max-w-[32ch] text-right font-normal">{{ dept.blurb }}</p>
+        </div>
+        {% endfor %}
     </div>
 </section>
 
-<section class="border-t border-text-muted/15">
-    <div class="max-w-6xl mx-auto px-6 md:px-16 py-10 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-text-muted/15">
-        <div class="py-6 md:py-0 md:px-6 first:pl-0">
-            <h3 class="font-grotesk font-semibold text-text text-lg">Stage &amp; Performance</h3>
-            <p class="text-text-muted text-sm mt-2 font-normal">Drama, music, and dance — competitive and open-floor.</p>
-        </div>
-        <div class="py-6 md:py-0 md:px-6">
-            <h3 class="font-grotesk font-semibold text-text text-lg">Words &amp; Ideas</h3>
-            <p class="text-text-muted text-sm mt-2 font-normal">Debate, recitation, and writing competitions.</p>
-        </div>
-        <div class="py-6 md:py-0 md:px-6 last:pr-0">
-            <h3 class="font-grotesk font-semibold text-text text-lg">Visual &amp; Craft</h3>
-            <p class="text-text-muted text-sm mt-2 font-normal">Photography, fine arts, and design showcases.</p>
-        </div>
+<!-- 3. GLIMPSE SLIDESHOW -->
+<section class="relative min-h-screen flex items-center overflow-hidden border-b border-text-muted/15">
+    {% for img in gallery %}
+    <img src="{{ img.src }}" alt="{{ img.alt }}"
+         class="slide {% if forloop.first %}active{% endif %} absolute inset-0 w-full h-full object-cover"
+         data-slide>
+    {% endfor %}
+    <div class="absolute inset-0 bg-gradient-to-r from-bg via-bg/70 to-transparent"></div>
+
+    <div class="relative px-6 md:px-12 lg:px-20 max-w-lg">
+        <p class="text-text-muted text-sm font-medium">A glimpse</p>
+        <h2 class="font-grotesk font-bold text-text text-3xl md:text-5xl mt-2 leading-tight">
+            Moments from campus, not a stock library.
+        </h2>
+        <p class="text-text-muted mt-4 font-normal">Rehearsals, backstage, opening nights — the club as it actually looks.</p>
     </div>
 </section>
 
-<section class="px-6 md:px-16 py-12 md:py-16 max-w-6xl mx-auto"
-         {% if flagship %}style="--event-accent: {{ flagship.primary_color }};"{% endif %}>
-    <div class="bg-surface rounded-2xl p-6 md:p-10 border {% if flagship %}border-[var(--event-accent)]/40{% else %}border-text-muted/20{% endif %} flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div>
-            <p class="text-text-muted text-sm font-medium">Flagship event</p>
-            {% if flagship %}
-                <h2 class="font-grotesk font-bold text-2xl md:text-3xl text-text mt-1">{{ flagship.name }}</h2>
-                <p class="text-[var(--event-accent)] font-medium mt-2">
-                    {{ flagship.date }} · Government Science College, Tejgaon
-                </p>
-            {% else %}
-                <h2 class="font-grotesk font-bold text-2xl md:text-3xl text-text mt-1">
-                    2nd National Cultural Carnival
-                </h2>
-                <p class="text-accent font-medium mt-2">Nov 26–28, 2026 · Government Science College, Tejgaon</p>
-            {% endif %}
+<!-- 4. EVENTS -->
+<section class="min-h-screen flex flex-col justify-center border-b border-text-muted/15 px-6 md:px-12 lg:px-20 py-20">
+    <p class="text-text-muted text-sm font-medium mb-2">Upcoming</p>
+
+    {% if flagship %}
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-text-muted/15 pb-8 mb-8">
+        <h2 class="font-grotesk font-bold text-text text-3xl md:text-5xl">{{ flagship.name }}</h2>
+        <div class="text-right">
+            <p class="text-accent font-medium">{{ flagship.date }}</p>
+            <a href="{% url 'event_detail' flagship.slug %}" class="text-text hover:text-accent transition">View details →</a>
         </div>
-        <a href="{% if flagship %}{% url 'event_detail' flagship.slug %}{% else %}{% url 'event_list' %}{% endif %}"
-           class="shrink-0 {% if flagship %}bg-[var(--event-accent)]{% else %}bg-accent{% endif %} text-white font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition">
-            View details
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for event in other_events %}
+        <a href="{% url 'event_detail' event.slug %}" class="border-t border-text-muted/15 pt-4 hover:border-accent transition block">
+            <p class="text-text font-grotesk font-semibold text-lg">{{ event.name }}</p>
+            <p class="text-text-muted text-sm mt-1">{{ event.date }}</p>
         </a>
+        {% endfor %}
     </div>
 </section>
 
-<section class="border-t border-text-muted/15">
-    <div class="max-w-6xl mx-auto px-6 md:px-16 py-8 flex flex-col md:flex-row items-center justify-between gap-3">
-        <p class="text-text-muted text-sm font-normal">Run by students, for students.</p>
-        <a href="#" class="text-text text-sm hover:text-accent transition">Meet the committee →</a>
+<!-- 5. EXECUTIVE COMMITTEE -->
+<section id="committee" class="min-h-screen flex flex-col justify-center border-b border-text-muted/15 px-6 md:px-12 lg:px-20 py-20">
+    <p class="text-text-muted text-sm font-medium mb-10">Executive committee</p>
+
+    <div class="mb-14">
+        <p class="text-text-muted text-xs tracking-wide mb-5">Moderators</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            {% for person in moderators %}
+            <div class="flex items-center gap-5">
+                <img src="{{ person.photo }}" alt="{{ person.name }}" class="w-20 h-20 rounded-full object-cover border border-text-muted/20">
+                <div>
+                    <p class="font-grotesk font-bold text-text text-xl">{{ person.name }}</p>
+                    <p class="text-accent text-sm">{{ person.role }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div>
+        <p class="text-text-muted text-xs tracking-wide mb-5">Panelists</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+            {% for person in panelists %}
+            <div class="text-center">
+                <img src="{{ person.photo }}" alt="{{ person.name }}" class="w-16 h-16 rounded-full object-cover mx-auto border border-text-muted/20">
+                <p class="font-grotesk font-medium text-text text-sm mt-2">{{ person.name }}</p>
+                <p class="text-text-muted text-xs">{{ person.role }}</p>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </section>
 
+<script>
+    document.querySelectorAll('.reveal').forEach(el => {
+        new IntersectionObserver((entries, obs) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+        }, { threshold: 0.2 }).observe(el);
+    });
+
+    const stage = document.querySelector('.tilt-stage');
+    const tiltEl = document.getElementById('logo-tilt');
+    if (stage && tiltEl && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+        stage.addEventListener('mousemove', e => {
+            const r = stage.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width - 0.5;
+            const y = (e.clientY - r.top) / r.height - 0.5;
+            tiltEl.style.transform = `rotateY(${x * 22}deg) rotateX(${-y * 22}deg)`;
+        });
+        stage.addEventListener('mouseleave', () => { tiltEl.style.transform = ''; });
+    }
+
+    const slides = document.querySelectorAll('[data-slide]');
+    if (slides.length > 1) {
+        let i = 0;
+        setInterval(() => {
+            slides[i].classList.remove('active');
+            i = (i + 1) % slides.length;
+            slides[i].classList.add('active');
+        }, 4500);
+    }
+</script>
 {% endblock %}

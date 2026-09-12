@@ -7,85 +7,160 @@
     {% tailwind_css %}
     <title>{% block title %}Shreshtho's Website{% endblock %}</title>
 </head>
+
 <body class="bg-ink text-paper font-mono">
-    <nav class="sticky top-0 z-50 bg-ink border-b-[3px] border-paper">
-        <div class="flex items-center justify-between px-6 md:px-16 py-4">
+    <div id="cursor-ring" class="cursor-el"></div>
+    <div id="cursor-dot" class="cursor-el"></div>
+    <nav id="site-nav" class="fixed top-0 left-0 right-0 z-50 bg-transparent transition-colors duration-300">
+        <div class="flex items-center justify-between px-6 md:px-12 lg:px-20 py-5">
     
-            <div class="flex items-center gap-10">
-                <a href="{% url 'homepage' %}" class="font-display font-black text-2xl tracking-tight">
-                    GSCCC<span style="color: var(--color-accent);">.</span>
-                </a>
-    
-                <div class="hidden md:flex items-center gap-8 font-mono text-sm uppercase tracking-wide">
-                    <a href="{% url 'event_list' %}" class="hover:text-[var(--color-accent)] transition-colors">Events</a>
-                    <a href="{% url 'aboutpage' %}" class="hover:text-[var(--color-accent)] transition-colors">About</a>
-                </div>
+            <div class="flex items-center gap-3 select-none">
+                <img src="{% static 'logo/darkmode.webp' %}" alt="GSCCC" class="h-8 w-8 object-contain">
+                <span class="font-grotesk text-sm tracking-wide text-text">GSCCC</span>
             </div>
     
-            <div class="hidden md:flex items-center gap-6">
-                <span class="w-[2px] h-6 bg-paper/30"></span>
-                <a href="{% url 'event_detail' 'ncc' %}">
-                    <button class="btn relative overflow-hidden font-display font-bold text-xs py-2.5 px-5"
-                            style="background: var(--color-accent); border-color: var(--color-accent); color: var(--color-ink); box-shadow: 5px 5px 0 var(--color-paper);">
-                        <span class="relative z-10">Register for NCC</span>
-                        <span class="animate-shimmer pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-paper/40"></span>
-                    </button>
-                </a>
+            <div class="hidden md:flex items-center gap-10 text-sm font-medium">
+                <a href="{% url 'homepage' %}" class="text-text hover:text-accent transition">Home</a>
+                <a href="{% url 'event_list' %}" class="text-text hover:text-accent transition">Events</a>
+                <a href="{% url 'aboutpage' %}" class="text-text hover:text-accent transition">About</a>
+                <a href="#committee" class="text-text hover:text-accent transition">Committee</a>
             </div>
     
-            <button id="nav-toggle" class="md:hidden flex flex-col gap-1.5 border-2 border-paper p-2" aria-label="Toggle menu" aria-expanded="false">
-                <span class="block w-5 h-0.5 bg-paper"></span>
-                <span class="block w-5 h-0.5 bg-paper"></span>
-                <span class="block w-5 h-0.5 bg-paper"></span>
+            <button id="menu-toggle" aria-label="Toggle menu" aria-expanded="false"
+                    class="md:hidden relative z-50 w-9 h-9 flex flex-col items-center justify-center gap-[6px]">
+                <span class="menu-line block w-7 h-0.5 bg-text transition-all duration-300 origin-center"></span>
+                <span class="menu-line block w-7 h-0.5 bg-text transition-all duration-300 origin-center"></span>
             </button>
-    
-        </div>
-    
-        <div id="mobile-menu" class="hidden md:hidden flex-col font-mono uppercase text-sm px-6 pb-5">
-            <a href="{% url 'event_list' %}" class="py-3 border-t-2 border-paper">Events</a>
-            <a href="{% url 'aboutpage' %}" class="py-3 border-t-2 border-paper">About</a>
-            <a href="{% url 'event_register' 'ncc' %}" class="pt-4">
-                <button class="btn w-full font-display font-bold text-xs"
-                        style="background: var(--color-accent); border-color: var(--color-accent); color: var(--color-ink); box-shadow: 5px 5px 0 var(--color-paper);">
-                    Register
-                </button>
-            </a>
         </div>
     </nav>
+    <div id="scroll-progress" class="fixed top-0 left-0 h-[2px] bg-accent z-50" style="width:0%"></div>
+    <script>
+        window.addEventListener('scroll', () => {
+            const h = document.documentElement;
+            const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+            document.getElementById('scroll-progress').style.width = pct + '%';
+        });
+    </script>
+    <div id="menu-overlay"
+         class="fixed inset-0 z-40 bg-bg flex flex-col items-start justify-center px-6 md:px-12 gap-4 opacity-0 invisible transition-all duration-300">
+        <a href="{% url 'homepage' %}" class="font-grotesk font-bold text-5xl text-text hover:text-accent transition">Home</a>
+        <a href="{% url 'event_list' %}" class="font-grotesk font-bold text-5xl text-text hover:text-accent transition">Events</a>
+        <a href="{% url 'aboutpage' %}" class="font-grotesk font-bold text-5xl text-text hover:text-accent transition">About</a>
+        <a href="#committee" class="font-grotesk font-bold text-5xl text-text hover:text-accent transition">Committee</a>
+    </div>
 
     <main class="min-h-[70vh]">
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer class="border-t border-text-muted/15 mt-20">
-        <div class="max-w-6xl mx-auto px-4 md:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-text-muted font-normal">
-            <p>&copy; 2026 Government Science College Cultural Club</p>
-            <div class="flex gap-6">
-                <a href="{% url 'event_list' %}" class="hover:text-text transition">Events</a>
-                <a href="{% url 'aboutpage' %}" class="hover:text-text transition">About</a>
+    <footer class="border-t border-text-muted/15">
+        <div class="max-w-none px-6 md:px-12 lg:px-20 py-14 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <p class="font-grotesk font-bold text-text text-lg">GSCCC</p>
+                <p class="text-text-muted text-sm mt-2 font-normal max-w-[32ch]">Government Science College Cultural Club.</p>
+            </div>
+            <div class="flex gap-8 text-sm">
+                <a href="{% url 'event_list' %}" class="text-text-muted hover:text-text transition">Events</a>
+                <a href="{% url 'aboutpage' %}" class="text-text-muted hover:text-text transition">About</a>
+                <a href="#committee" class="text-text-muted hover:text-text transition">Committee</a>
+            </div>
+            <div class="md:text-right text-sm text-text-muted font-normal">
+                <p>&copy; 2026 GSCCC</p>
+                <p class="mt-1">Built by <a href="https://github.com/Shreshtho02" class="text-text hover:text-accent transition">Shreshtho</a></p>
             </div>
         </div>
     </footer>
 
     <script>
-        const toggle = document.getElementById('nav-toggle');
-        const menu = document.getElementById('mobile-menu');
-        toggle.addEventListener('click', () => {
-            const isOpen = menu.classList.toggle('flex');
-            menu.classList.toggle('hidden');
-            toggle.setAttribute('aria-expanded', isOpen);
+        const nav = document.getElementById('site-nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('bg-bg/95', window.scrollY > 40);
+            nav.classList.toggle('backdrop-blur', window.scrollY > 40);
+            nav.classList.toggle('border-b', window.scrollY > 40);
+            nav.classList.toggle('border-text-muted/15', window.scrollY > 40);
         });
-        
-        const nav = document.querySelector('nav');
-        const setNavHeight = () => {
-            document.documentElement.style.setProperty('--nav-h', `${nav.offsetHeight}px`);
-        };
-        setNavHeight();
-        window.addEventListener('resize', setNavHeight);
-        // Nav height can change when the mobile menu opens/closes or fonts finish loading
-        new ResizeObserver(setNavHeight).observe(nav);
+    
+        const menuBtn = document.getElementById('menu-toggle');
+        const overlay = document.getElementById('menu-overlay');
+        const lines = document.querySelectorAll('.menu-line');
+        let menuOpen = false;
+        menuBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            menuBtn.setAttribute('aria-expanded', menuOpen);
+            overlay.classList.toggle('opacity-0', !menuOpen);
+            overlay.classList.toggle('invisible', !menuOpen);
+            lines[0].style.transform = menuOpen ? 'translateY(3.5px) rotate(45deg)' : '';
+            lines[1].style.transform = menuOpen ? 'translateY(-3.5px) rotate(-45deg)' : '';
+        });
+        overlay.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menuBtn.click()));
     </script>
-
+    <script>
+        const dot = document.getElementById('cursor-dot');
+        const ring = document.getElementById('cursor-ring');
+    
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            let mx = 0, my = 0, rx = 0, ry = 0;
+    
+            window.addEventListener('mousemove', e => {
+                mx = e.clientX; my = e.clientY;
+                dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
+            });
+    
+            function loop() {
+                rx += (mx - rx) * 0.15;
+                ry += (my - ry) * 0.15;
+                ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%)`;
+                requestAnimationFrame(loop);
+            }
+            loop();
+    
+            document.querySelectorAll('a, button, [data-cursor]').forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    ring.classList.add('is-active');
+                    const label = el.getAttribute('data-cursor-label');
+                    if (label) { ring.classList.add('is-text'); ring.setAttribute('data-label', label); }
+                });
+                el.addEventListener('mouseleave', () => {
+                    ring.classList.remove('is-active', 'is-text');
+                });
+            });
+    
+            document.addEventListener('mouseleave', () => { dot.style.opacity = 0; ring.style.opacity = 0; });
+            document.addEventListener('mouseenter', () => { dot.style.opacity = 1; ring.style.opacity = 1; });
+        }
+    </script>
+    <script>
+        // Reveal on scroll, with per-child stagger when a container has [data-stagger]
+        const io = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const el = entry.target;
+                if (el.hasAttribute('data-stagger')) {
+                    [...el.children].forEach((child, i) => {
+                        child.style.transitionDelay = `${i * 90}ms`;
+                        child.classList.add('in');
+                    });
+                } else {
+                    el.classList.add('in');
+                }
+                obs.unobserve(el);
+            });
+        }, { threshold: 0.2 });
+    
+        document.querySelectorAll('.reveal, [data-stagger]').forEach(el => io.observe(el));
+    
+        // Lightweight parallax: elements with data-parallax="0.3" move at 30% of scroll speed
+        const parallaxEls = [...document.querySelectorAll('[data-parallax]')];
+        if (parallaxEls.length && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+            window.addEventListener('scroll', () => {
+                const y = window.scrollY;
+                parallaxEls.forEach(el => {
+                    const speed = parseFloat(el.dataset.parallax);
+                    el.style.transform = `translateY(${y * speed}px)`;
+                });
+            }, { passive: true });
+        }
+    </script>
 </body>
 </html>
