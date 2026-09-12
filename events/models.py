@@ -1,6 +1,6 @@
 import os
 from django.db import models
-# from django.utils.text import slugify
+from django.utils.text import slugify
 from colorfield.fields import ColorField
 from django.core.exceptions import ValidationError
 from datetime import datetime
@@ -11,6 +11,16 @@ def banner_renamer(instance,file):
     slug = instance.slug
     renamed_file = f"{slug}.{extension}"
     return os.path.join('banners', renamed_file)
+
+def segment_icon_renamer(instance, file):
+    # EventSeg has no slug of its own, so we build a stable name from the parent
+    # event's slug + the segment name. Like banner_renamer, this depends on
+    # instance.event and instance.name already being set before save() — pk
+    # isn't assigned yet at this point for a brand-new segment, so it can't be used.
+    extension = file.split('.')[-1]
+    event_slug = instance.event.slug if instance.event_id else 'unassigned'
+    segment_slug = slugify(instance.name) or 'segment'
+    return os.path.join('segment_icons', f"{event_slug}-{segment_slug}.{extension}")
 
 class Event(models.Model):
     STATUS = [
@@ -28,7 +38,6 @@ class Event(models.Model):
 
     def __str__(self):
         return self.name
-    
 
 class Eligibility(models.Model):
     CLASS_CHOICES = [
@@ -66,16 +75,58 @@ class Eligibility(models.Model):
 
 
 class EventSeg(models.Model):
+    FORMAT_CHOICES = [
+        ('online', 'Online'),
+        ('offline', 'Offline'),
+    ]
+    ICON_CHOICES = [
+        ('music', 'Music / Singing'),
+        ('dance', 'Dance'),
+        ('drama', 'Drama / Acting'),
+        ('art', 'Art / Design'),
+        ('photography', 'Photography'),
+        ('writing', 'Writing'),
+        ('quiz', 'Quiz / Trivia'),
+        ('speech', 'Speech / Debate'),
+        ('comedy', 'Comedy'),
+        ('film', 'Film / Video'),
+        ('tech', 'Tech / Gaming'),
+        ('general', 'General'),
+    ]
     name = models.CharField(max_length=100)
-    type = models.CharField(max_length=100)
+    group_label = models.CharField(
+        max_length=100, blank=True,
+        help_text="Optional heading to cluster related segments on the event page, e.g. 'Singing', 'Quiz Arena'."
+    )
+    format = models.CharField(max_length=10, choices=FORMAT_CHOICES)
+    icon = models.CharField(
+        max_length=20, choices=ICON_CHOICES, default='general',
+        help_text="Fallback icon shown if no custom icon image (below) is uploaded."
+    )
+    icon_image = models.ImageField(
+        upload_to=segment_icon_renamer, blank=True, null=True,
+        help_text="Optional custom icon/logo for this specific segment. Overrides the fallback icon above when set."
+    )
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='segmentset')
     fee = models.PositiveIntegerField()
-    eligibility = models.ForeignKey(Eligibility, on_delete=models.PROTECT, related_name='segments', null=True, blank=True)
+    eligibility = models.ForeignKey(Eligibility, on_delete=models.PROTECT, related_name='segments')
+    is_group = models.BooleanField(default=False)
+    team_size = models.PositiveIntegerField(
+        null=True, blank=True,
+        help_text="Members per team — only meaningful if is_group is True."
+    )
+    subcategories = models.CharField(
+        max_length=300, blank=True,
+        help_text="Comma-separated styles/options, display only, e.g. 'Patriotic, Folk, Modern/Band'."
+    )
+
+    def get_subcategory_options(self):
+        return [option.strip() for option in self.subcategories.split(',') if option.strip()]
 
     def __str__(self):
         return self.name
 
-
+# Campus Ambassador models were removed in migration 0011.
 class Participant(models.Model):
     STATUS = [
         ('pending', 'Pending'),
@@ -106,86 +157,18 @@ class Participant(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
     addnote = models.TextField(blank=True)
     participant_class = models.CharField(max_length=15, choices=PARTICIPANT_CLASS, blank=True, null=True)
+    selected_subcategories = models.JSONField(default=dict, blank=True)
 
     def clean(self):
+        # Only meaningful on updates (e.g. admin editing an existing registration) —
+        # the M2M can't be queried before the instance has a pk. The real
+        # duplicate-registration check for new submissions lives in
+        # RegistrationForm.clean(), where selected segments are already
+        # available pre-save.
         if self.pk:
-            selected_segments = self.segment.all()
-            for seg in selected_segments:
+            for seg in self.segment.all():
                 if seg.event_id != self.event_id:
                     raise ValidationError(f"{seg.name} does not belong to {self.event.name}.")
-                already_registered = Participant.objects.filter(
-                    email=self.email,
-                    segment=seg
-                ).exclude(pk=self.pk).exists()
-                if already_registered:
-                    raise ValidationError(f"{self.email} is already registered for {seg.name}.")
 
     def __str__(self):
         return self.name
-
-
-class CABatch(models.Model):
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='ca_batches')
-    name = models.CharField(max_length=100)
-    is_open = models.BooleanField(default=False)
-    requires_reference = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"{self.event.name} — {self.name}"
-
-    def clean(self):
-        if self.is_open:
-            conflict = CABatch.objects.filter(
-                event=self.event,
-                is_open=True
-            ).exclude(pk=self.pk).exists()
-            if conflict:
-                raise ValidationError(
-                    "Another batch for this event is already open. Close it before opening this one."
-                )
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-
-
-class CampusAmbassador(models.Model):
-    GENDER_CHOICES = [
-        ('M', 'Male'),
-        ('F', 'Female'),
-    ]
-    PARTICIPANTS_ESTIMATE = [
-        ('10', '10'),
-        ('20', '20'),
-        ('30', '30'),
-        ('40', '40'),
-        ('40+', '40+'),
-    ]
-    STATUS = [
-        ('pending', 'Pending'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
-    ]
-
-    batch = models.ForeignKey(CABatch, on_delete=models.CASCADE, related_name='applicants')
-    full_name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=20)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    email = models.EmailField(max_length=100)
-    institution = models.CharField(max_length=200)
-    class_batch = models.CharField(max_length=4, choices=Eligibility.CLASS_CHOICES)
-    address = models.TextField()
-    facebook = models.URLField()
-    instagram = models.URLField(blank=True)
-    past_experience = models.TextField(blank=True)
-    club_affiliation = models.TextField(blank=True)
-    motivation = models.TextField()
-    participants_estimate = models.CharField(max_length=3, choices=PARTICIPANTS_ESTIMATE)
-    help_plan = models.TextField()
-    photo = models.ImageField(upload_to='ca_photos/')
-    reference_code = models.CharField(max_length=100, blank=True)
-    status = models.CharField(max_length=10, choices=STATUS, default='pending')
-    submitted_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.full_name

@@ -1,0 +1,33 @@
+<article class="ticket-card" style="--card-accent: var(--event-accent);">
+    <span class="ticket-card__icon-bg" aria-hidden="true">
+        {% if segment.icon_image %}
+            <img src="{{ segment.icon_image.url }}" alt="">
+        {% else %}
+            {% include "events/_segment_icon.html" with icon=segment.icon %}
+        {% endif %}
+    </span>
+    <div class="ticket-card__body">
+        <div class="ticket-card__meta">
+            <span class="ticket-card__icon-chip" aria-hidden="true">
+                {% if segment.icon_image %}
+                    <img src="{{ segment.icon_image.url }}" alt="">
+                {% else %}
+                    {% include "events/_segment_icon.html" with icon=segment.icon %}
+                {% endif %}
+            </span>
+        </div>
+        <h3 class="ticket-card__title">{{ segment.name }}</h3>
+        <p class="ticket-card__detail">
+            {% if segment.is_group %}
+                Team{% if segment.team_size %} of {{ segment.team_size }}{% endif %}{% if segment.group_label %} · {{ segment.group_label }}{% endif %}
+            {% else %}
+                {{ segment.subcategories|default:"Solo entry" }}
+            {% endif %}
+        </p>
+    </div>
+    <div class="ticket-card__tear" aria-hidden="true"></div>
+    <div class="ticket-card__footer">
+        <span class="ticket-card__fee-label">Entry fee</span>
+        <span class="ticket-card__fee">৳{{ segment.fee }}</span>
+    </div>
+</article>

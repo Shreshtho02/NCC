@@ -1,0 +1,97 @@
+<section class="card-hard p-4 md:p-5 flex flex-col gap-4" style="--card-accent: var(--event-accent);" aria-labelledby="segment-selector-title">
+    <div class="flex flex-col gap-1">
+        <h2 id="segment-selector-title" class="font-display font-bold uppercase text-base tracking-wide">Choose segments</h2>
+        <p class="font-mono text-[0.65rem] text-paper/60">Select one or more. Options appear below for your picks.</p>
+    </div>
+
+    <div class="segment-selector__grid">
+        {% for card in form.segment_cards %}
+        <label class="segment-choice{% if card.selected %} is-selected{% endif %}" data-segment-card="{{ card.segment.pk }}">
+            <input class="segment-choice__input" type="checkbox" name="{{ form.segment.html_name }}" value="{{ card.segment.pk }}" {% if card.selected %}checked{% endif %}>
+            <span class="segment-choice__icon" aria-hidden="true">
+                {% if card.segment.format == "online" %}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"></circle><path d="M4 12h16M12 4c2.1 2.2 3.2 4.8 3.2 8S14.1 17.8 12 20c-2.1-2.2-3.2-4.8-3.2-8S9.9 6.2 12 4Z"></path></svg>
+                {% else %}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 10c0 5-7 10-7 10S5 15 5 10a7 7 0 1 1 14 0Z"></path><circle cx="12" cy="10" r="2.25"></circle></svg>
+                {% endif %}
+            </span>
+            <span class="segment-choice__content">
+                <span class="segment-choice__topline">
+                    <span class="segment-choice__format">{{ card.segment.get_format_display }}</span>
+                    <span class="segment-choice__fee">৳{{ card.segment.fee }}</span>
+                </span>
+                <span class="segment-choice__name">{{ card.segment.name }}</span>
+                <span class="segment-choice__detail">{% if card.segment.is_group %}Team{% if card.segment.team_size %} of {{ card.segment.team_size }}{% endif %}{% else %}{{ card.segment.subcategories|default:"Open entry" }}{% endif %}</span>
+            </span>
+        </label>
+        {% endfor %}
+    </div>
+
+    {{ form.segment_selections }}
+    <div class="segment-selector__options" id="segment-options" aria-live="polite"></div>
+
+    {% for error in form.segment.errors %}
+        <p class="font-mono text-[0.7rem]" style="color: var(--event-accent);">{{ error }}</p>
+    {% endfor %}
+
+    <div class="flex items-center justify-between border-t-2 border-paper/20 pt-3">
+        <span class="font-mono text-xs uppercase tracking-widest text-paper/60">Total</span>
+        <span id="segment-total-value" class="font-display font-black text-xl" style="color: var(--color-accent-soft);">৳0</span>
+    </div>
+</section>
+
+{{ form.segment_option_data|json_script:"segment-card-data" }}
+<script>
+(() => {
+    const cards = document.querySelectorAll('[data-segment-card]');
+    const optionsContainer = document.getElementById('segment-options');
+    const selectionInput = document.getElementById('{{ form.segment_selections.id_for_label }}');
+    const totalEl = document.getElementById('segment-total-value');
+    const cardData = JSON.parse(document.getElementById('segment-card-data').textContent);
+    let selections = {};
+
+    try { selections = JSON.parse(selectionInput.value || '{}'); } catch (_) { selections = {}; }
+
+    const render = () => {
+        const selectedIds = new Set([...cards]
+            .filter((card) => card.querySelector('input').checked)
+            .map((card) => card.dataset.segmentCard));
+        selections = Object.fromEntries(Object.entries(selections).filter(([id]) => selectedIds.has(id)));
+
+        cards.forEach((card) => card.classList.toggle('is-selected', card.querySelector('input').checked));
+        optionsContainer.replaceChildren();
+
+        let total = 0;
+        selectedIds.forEach((id) => { total += cardData[id] ? cardData[id].fee : 0; });
+        totalEl.textContent = `৳${total}`;
+
+        Object.entries(cardData).filter(([id, card]) => selectedIds.has(id) && card.options.length).forEach(([id, card]) => {
+            const group = document.createElement('fieldset');
+            group.className = 'segment-option-group';
+            const legend = document.createElement('legend');
+            legend.textContent = `${card.name} options`;
+            group.append(legend);
+            card.options.forEach((option) => {
+                const label = document.createElement('label');
+                label.className = 'segment-option';
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = `segment-option-${id}`;
+                input.value = option;
+                input.checked = selections[id] === option;
+                input.addEventListener('change', () => {
+                    selections[id] = option;
+                    selectionInput.value = JSON.stringify(selections);
+                });
+                label.append(input, document.createTextNode(option));
+                group.append(label);
+            });
+            optionsContainer.append(group);
+        });
+        selectionInput.value = JSON.stringify(selections);
+    };
+
+    cards.forEach((card) => card.querySelector('input').addEventListener('change', render));
+    render();
+})();
+</script>

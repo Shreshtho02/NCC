@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nata+Sans:wght@100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import "tailwindcss";
 
 input[type="text"],
@@ -45,16 +45,21 @@ input[type="checkbox"] {
 }
 
 @theme {
-    --font-display: "Nata Sans", sans-serif;
-    --font-body: "Nata Sans", sans-serif;
+    --font-display: "Poppins", sans-serif;
+    --font-body: "Poppins", sans-serif;
     --font-mono: "Space Mono", monospace;
-    --color-ink: #0A0A0C;
+    --color-ink: #150E20;
     --color-paper: #F4EDE2;
     --color-accent: #8B5CF6;
+    --color-accent-soft: #C4B5FD;
 }
 
 body {
     font-family: var(--font-body);
+}
+
+@utility hero-glow {
+    background-image: radial-gradient(ellipse 65% 55% at 25% 15%, color-mix(in oklab, var(--event-accent, var(--color-accent)) 22%, transparent), transparent 70%);
 }
 
 @utility btn {
@@ -67,6 +72,321 @@ body {
 @utility card-hard {
     @apply border-[3px] border-paper bg-ink transition-transform duration-100;
     box-shadow: 7px 7px 0 var(--card-accent, var(--color-accent));
+}
+
+.segment-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.ticket-card {
+    position: relative;
+    display: flex;
+    min-height: 180px;
+    flex-direction: column;
+    overflow: hidden;
+    border: 2px solid var(--color-paper);
+    background: var(--color-ink);
+    color: var(--color-paper);
+    clip-path: polygon(0 0, 100% 0, 100% 91%, 96% 100%, 0 100%);
+    transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.ticket-card::before,
+.ticket-card::after {
+    position: absolute;
+    z-index: 1;
+    width: 20px;
+    height: 20px;
+    content: "";
+    background: var(--color-ink);
+}
+
+.ticket-card::before { top: -2px; left: -2px; }
+.ticket-card::after { right: -2px; bottom: -2px; }
+
+.ticket-card:hover,
+.ticket-card:focus-within {
+    transform: translate(-6px, -6px);
+    box-shadow: 8px 8px 0 #8B5CF6;
+}
+
+.ticket-card__body { position: relative; z-index: 1; padding: 1.1rem 1.3rem 0.9rem; }
+
+.ticket-card__meta {
+    display: flex;
+    min-height: 1.5rem;
+    justify-content: flex-end;
+}
+
+.ticket-card__icon-chip {
+    display: inline-flex;
+    width: 1.6rem;
+    height: 1.6rem;
+    align-items: center;
+    justify-content: center;
+    color: var(--card-accent);
+}
+.ticket-card__icon-chip svg,
+.ticket-card__icon-chip img { width: 100%; height: 100%; object-fit: contain; }
+
+.ticket-card__icon-bg {
+    position: absolute;
+    z-index: 0;
+    right: -1rem;
+    bottom: -1rem;
+    width: 7.5rem;
+    height: 7.5rem;
+    color: var(--card-accent);
+    opacity: 0.14;
+    pointer-events: none;
+    transform: rotate(-8deg);
+}
+.ticket-card__icon-bg svg,
+.ticket-card__icon-bg img { width: 100%; height: 100%; object-fit: contain; }
+
+.ticket-card__title {
+    display: -webkit-box;
+    min-height: calc(1.15em * 2);
+    margin-top: 0.9rem;
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2vw, 1.45rem);
+    font-weight: 900;
+    line-height: 1.15;
+    text-transform: uppercase;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.ticket-card__detail {
+    display: -webkit-box;
+    min-height: 2.5rem;
+    margin-top: 0.6rem;
+    overflow: hidden;
+    color: color-mix(in oklab, var(--color-paper) 58%, var(--card-accent));
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    line-height: 1.35;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.ticket-card__tear {
+    position: relative;
+    z-index: 1;
+    margin: auto 1.15rem 0;
+    border-top: 2px dashed color-mix(in oklab, var(--color-paper) 40%, transparent);
+}
+
+.ticket-card__tear::before,
+.ticket-card__tear::after {
+    position: absolute;
+    top: -7px;
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    content: "";
+    background: var(--color-ink);
+}
+
+.ticket-card__tear::before { left: -1.55rem; }
+.ticket-card__tear::after { right: -1.55rem; }
+
+.ticket-card__footer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 1rem 1.15rem 1.05rem;
+}
+
+.ticket-card__fee-label {
+    color: color-mix(in oklab, var(--color-paper) 52%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.ticket-card__fee {
+    color: var(--color-accent-soft);
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 900;
+}
+
+/* --- Segment selector (registration form panel) ---
+   Deliberately compact: this panel sits in a half-width sticky column next to
+   the form on desktop, and stacks above the form on mobile, so card size and
+   grid density matter more here than in the full-width event-detail ticket grid. */
+
+.segment-selector { display: flex; flex-direction: column; gap: 0.85rem; }
+
+.segment-selector__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+@media (min-width: 480px) {
+    .segment-selector__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.segment-choice {
+    display: flex;
+    min-height: 104px;
+    cursor: pointer;
+    border: 2px solid color-mix(in oklab, var(--color-paper) 45%, transparent);
+    background: color-mix(in oklab, var(--color-ink) 92%, var(--event-accent));
+    padding: 0.6rem;
+    transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.segment-choice:hover,
+.segment-choice:has(input:focus-visible) {
+    border-color: var(--event-accent);
+}
+
+.segment-choice.is-selected {
+    border-color: var(--event-accent);
+    box-shadow: 4px 4px 0 #8B5CF6;
+    transform: translate(-2px, -2px);
+}
+
+.segment-choice__input {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    opacity: 0;
+}
+
+.segment-choice__icon {
+    flex: 0 0 auto;
+    inline-size: 1.35rem;
+    block-size: 1.35rem;
+    margin-right: 0.45rem;
+    color: var(--event-accent);
+}
+
+.segment-choice__icon svg { inline-size: 100%; block-size: 100%; }
+.segment-choice__content { display: flex; min-width: 0; flex: 1; flex-direction: column; }
+.segment-choice__topline { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.35rem; }
+
+.segment-choice__format,
+.segment-choice__fee {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.segment-choice__format { color: color-mix(in oklab, var(--color-paper) 55%, transparent); }
+.segment-choice__fee { color: var(--color-accent-soft); }
+
+.segment-choice__name {
+    display: -webkit-box;
+    min-height: calc(1.2em * 2);
+    margin-top: 0.4rem;
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 800;
+    line-height: 1.2;
+    text-transform: uppercase;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.segment-choice__detail {
+    display: -webkit-box;
+    margin-top: 0.35rem;
+    overflow: hidden;
+    color: color-mix(in oklab, var(--color-paper) 60%, var(--event-accent));
+    font-size: 0.65rem;
+    line-height: 1.3;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.segment-selector__options { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.segment-option-group {
+    border: 1px solid color-mix(in oklab, var(--color-paper) 35%, transparent);
+    padding: 0.6rem;
+}
+
+.segment-option-group legend {
+    padding: 0 0.35rem;
+    color: var(--event-accent);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.segment-option { display: inline-flex; align-items: center; gap: 0.4rem; margin: 0.3rem 0.6rem 0.15rem 0; font-size: 0.78rem; }
+.segment-option input { inline-size: 0.9rem; block-size: 0.9rem; accent-color: var(--event-accent); }
+
+/* --- Sponsor / partner marquees (event detail page) ---
+   Placeholder tiles for now; swap the tile markup for real logos later without
+   touching the scroll mechanics. Edge mask fades tiles into the page background
+   instead of hard-cutting them mid-logo. */
+
+.marquee {
+    position: relative;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+            mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+
+.marquee__track {
+    display: flex;
+    width: max-content;
+}
+
+.marquee__group {
+    display: flex;
+    flex-shrink: 0;
+    gap: 1rem;
+    padding-right: 1rem;
+}
+
+.marquee:hover .marquee__track {
+    animation-play-state: paused;
+}
+
+.marquee-item {
+    display: flex;
+    min-width: 150px;
+    height: 68px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid color-mix(in oklab, var(--color-paper) 40%, transparent);
+    color: color-mix(in oklab, var(--color-paper) 55%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0 0.75rem;
+}
+
+@theme {
+    --animate-marquee: marquee-scroll 24s linear infinite;
+    --animate-marquee-reverse: marquee-scroll 24s linear infinite reverse;
+}
+
+@keyframes marquee-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-marquee, .animate-marquee-reverse { animation: none; }
 }
 
 

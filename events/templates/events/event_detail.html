@@ -15,49 +15,36 @@
         2
     </span>
 
-    <div class="pointer-events-none absolute inset-y-0 right-[-15%] w-[50%] -skew-x-12 origin-top-right"
-         style="background: var(--event-accent); opacity: 0.1;"></div>
+    <div class="pointer-events-none absolute inset-0 hero-glow"></div>
 
-    <div class="relative grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-14 items-end">
+    <div class="relative flex flex-col gap-y-[2.5rem] lg:grid lg:grid-cols-[1.1fr_1fr] lg:grid-rows-2 lg:gap-x-14 lg:items-end">
 
-        <div class="relative z-10">
-            <p class="font-mono text-xs uppercase tracking-widest mb-4" style="color: var(--event-accent);">
+        <div class="relative z-10 lg:col-start-1 lg:row-start-1">
+            <p class="font-body text-xs uppercase tracking-widest mb-4" style="color: var(--event-accent);">
                 {{ event.status }} — {{ event.date }}
             </p>
 
-            <h1 class="font-display font-black uppercase leading-[0.86] tracking-tight mb-9 text-[clamp(2.2rem,5.2vw,4.4rem)]">
+            <h1 class="font-display font-black uppercase leading-[0.86] tracking-tight text-[clamp(2.2rem,5.2vw,4.4rem)]">
                 <span class="block">2<sup class="text-[0.4em] align-super">nd</sup> National</span>
-                <span class="block" style="color: var(--event-accent);">Cultural Carnival</span>
+                <span class="relative block bg-gradient-to-r from-[var(--event-accent)] to-[var(--color-accent-soft)] bg-clip-text text-transparent">
+                    Cultural Carnival
+                    <span aria-hidden="true" class="absolute -top-2 -right-1 text-[0.35em]" style="color: var(--color-accent-soft);">✦</span>
+                </span>
             </h1>
-
-            <div class="flex flex-col sm:flex-row gap-4">
-                <a href="{% url 'event_register' event.slug %}" class="flex-1">
-                    <button class="btn w-full font-display font-bold bg-[var(--event-accent)] border-[var(--event-accent)] text-ink"
-                            style="box-shadow: 7px 7px 0 var(--color-paper);">
-                        Register
-                    </button>
-                </a>
-                <a href="#details" class="flex-1">
-                    <button class="btn w-full font-display font-bold" style="box-shadow: 7px 7px 0 var(--event-accent);">
-                        Details
-                    </button>
-                </a>
-            </div>
         </div>
 
-        <div class="relative">
-            <span class="absolute -top-5 -right-5 z-20 font-mono text-xs uppercase border-2 px-3 py-2 -rotate-6 bg-ink"
+        <div class="relative lg:col-start-2 lg:row-start-1 lg:row-span-2">
+            <span class="absolute -top-5 -right-5 z-20 font-body text-xs uppercase border-2 px-3 py-2 -rotate-6 bg-ink"
                   style="border-color: var(--event-accent); color: var(--event-accent);">
                 {{ event.date }}
             </span>
 
-            <div class="relative rotate-[-1.5deg] border-[3px] border-paper aspect-video overflow-hidden"
+            <div class="relative rotate-[-1.5deg] border-2 border-paper/80 aspect-[128/67] overflow-hidden"
                  style="box-shadow: 10px 10px 0 var(--event-accent);">
                 {% if event.banner %}
-                    <img src="{{ event.banner.url }}" alt="{{ event.name }} banner"
-                         class="w-full h-full object-cover">
+                    <img src="{{ event.banner.url }}" alt="{{ event.name }} banner" class="w-full h-full object-cover">
                 {% else %}
-                    <div class="w-full h-full flex items-center justify-center font-mono text-xs uppercase text-paper/70"
+                    <div class="w-full h-full flex items-center justify-center font-body text-xs uppercase text-paper/70"
                          style="background: repeating-linear-gradient(45deg,#17171a,#17171a 12px,var(--color-ink) 12px,var(--color-ink) 24px);">
                         No banner uploaded
                     </div>
@@ -65,12 +52,25 @@
             </div>
         </div>
 
+        <div class="flex flex-col sm:flex-row gap-4 lg:col-start-1 lg:row-start-2">
+            <a href="{% url 'event_register' event.slug %}" class="flex-1">
+                <button class="btn w-full font-display font-bold bg-[var(--event-accent)] border-[var(--event-accent)] text-ink"
+                        style="box-shadow: 7px 7px 0 var(--color-paper);">
+                    Register
+                </button>
+            </a>
+            <a href="#details" class="flex-1">
+                <button class="btn w-full font-display font-bold" style="box-shadow: 7px 7px 0 var(--event-accent);">
+                    Details
+                </button>
+            </a>
+        </div>
+
     </div>
 </section>
 
 <section class="px-6 md:px-16 pt-12" id="details">
-
-    <div class="border-[3px] border-paper p-8">
+    <div class="border-2 border-paper/80 p-8">
         <p class="font-body leading-relaxed max-w-[62ch] mb-6">
             {{ event.description }}
         </p>
@@ -78,20 +78,74 @@
             Add to Calendar
         </button>
     </div>
+</section>
 
-    <div class="mt-10 border-t-2 border-paper mb-16">
-        {% for segment in segments %}
-        <div class="grid grid-cols-[70px_1fr_auto_auto] items-center gap-4 py-5 border-b-2 border-paper">
-            <span class="font-mono text-2xl font-bold leading-none" style="color: var(--event-accent);">
-                {{ forloop.counter|stringformat:"02d" }}
-            </span>
-            <span class="font-display font-semibold uppercase text-lg">{{ segment.name }}</span>
-            <span class="font-mono text-xs uppercase text-right">{{ segment.type }}</span>
-            <span class="font-display font-bold text-right min-w-[70px]">৳{{ segment.fee }}</span>
-        </div>
+<section class="px-6 md:px-16 pt-14">
+    <p class="font-mono text-xs uppercase tracking-widest mb-4" style="color: var(--event-accent);">
+        Our Sponsors
+    </p>
+    {% include "events/_marquee.html" with items=sponsor_placeholders direction="left" label="Our sponsors" %}
+</section>
+
+<section class="px-6 md:px-16 pt-10">
+    <p class="font-mono text-xs uppercase tracking-widest mb-4" style="color: var(--event-accent);">
+        Club Partners
+    </p>
+    {% include "events/_marquee.html" with items=partner_placeholders direction="right" label="Club partners" %}
+</section>
+
+<section class="px-6 md:px-16 pt-14 pb-4" id="segments">
+
+    {% if offline_segments %}
+    <p class="font-body text-xs uppercase tracking-widest mb-4" style="color: var(--event-accent);">
+        Offline Segments
+    </p>
+    <div class="segment-grid">
+        {% for segment in offline_segments %}
+            {% include "events/_segment_card.html" with segment=segment %}
         {% endfor %}
     </div>
+    {% endif %}
 
+    {% if online_segments %}
+    <p class="font-body text-xs uppercase tracking-widest mt-10 mb-4" style="color: var(--event-accent);">
+        Online Segments
+    </p>
+    <div class="segment-grid">
+        {% for segment in online_segments %}
+            {% include "events/_segment_card.html" with segment=segment %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% for group in team_groups %}
+    <p class="font-body text-xs uppercase tracking-widest mt-10 mb-4" style="color: var(--event-accent);">
+        {{ group.label }}
+    </p>
+    <div class="segment-grid mb-16">
+        {% for segment in group.segments %}
+            {% include "events/_segment_card.html" with segment=segment %}
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+</section>
+
+<section class="px-6 md:px-16 pt-4 pb-24" id="venue">
+    <p class="font-mono text-xs uppercase tracking-widest mb-4" style="color: var(--event-accent);">
+        Venue
+    </p>
+    <div class="card-hard overflow-hidden" style="--card-accent: var(--event-accent);">
+        <iframe
+            src="https://www.google.com/maps?q=Government+Science+College,+Tejgaon,+Dhaka&output=embed"
+            class="w-full h-[320px] md:h-[420px] border-0"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Venue location — Government Science College, Tejgaon"></iframe>
+    </div>
+    <p class="font-mono text-[0.7rem] text-paper/50 mt-3">
+        Government Science College, Tejgaon, Dhaka
+    </p>
 </section>
 
 </div>

@@ -1,31 +1,38 @@
+from itertools import groupby
+
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import EventForm, RegistrationForm, CampusAmbassadorForm
+from .forms import RegistrationForm
 from .models import *
 from django.http import Http404, HttpResponse
 from .receipts import build_receipt_image
 from django.core import signing
 from django.core.signing import BadSignature
 
-# Create your views here.
-def create_event(request):
-    if request.method == 'POST':
-        form = EventForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('event_list')
-    else:
-        form = EventForm()
-
-    return render(request, 'events/event_form.html', {'form': form})
 
 def event_detail(request, slug):
     event = get_object_or_404(Event, slug=slug)
-    segments = event.segmentset.all()
+    segments = event.segmentset.order_by('group_label', 'id')
+
+    offline_segments = [s for s in segments if not s.is_group and s.format == 'offline']
+    online_segments = [s for s in segments if not s.is_group and s.format == 'online']
+    team_segments = [s for s in segments if s.is_group]
+    team_groups = [
+        {'label': label or 'Team Segments', 'segments': list(group)}
+        for label, group in groupby(team_segments, key=lambda s: s.group_label)
+    ]
+
     context = {
         'event': event,
-        'segments': segments
+        'offline_segments': offline_segments,
+        'online_segments': online_segments,
+        'team_groups': team_groups,
+        # Placeholders until a real Sponsor/Partner model exists — swap these
+        # two lines for a queryset later, the template/marquee don't need to change.
+        'sponsor_placeholders': [f'Sponsor {i}' for i in range(1, 7)],
+        'partner_placeholders': [f'Partner {i}' for i in range(1, 5)],
     }
     return render(request, 'events/event_detail.html', context)
+
 
 def event_register(request, slug):
     event = get_object_or_404(Event, slug=slug)
@@ -44,6 +51,7 @@ def event_register(request, slug):
     context = {'event': event, 'form': form}
     return render(request, 'events/event_register.html', context)
 
+
 def _get_registration_from_token(token):
     try:
         pk = signing.loads(token, max_age=60 * 60 * 24)  # token valid 24h
@@ -51,9 +59,10 @@ def _get_registration_from_token(token):
         raise Http404
     return get_object_or_404(Participant, pk=pk)
 
+
 def event_list(request):
     events = Event.objects.all()
-    return render(request, 'events/event_list.html', {'events':events})
+    return render(request, 'events/event_list.html', {'events': events})
 
 
 def registration_success(request, slug, token):
@@ -68,30 +77,10 @@ def registration_success(request, slug, token):
     }
     return render(request, 'events/registration_success.html', context)
 
+
 def registration_receipt(request, token):
     registration = _get_registration_from_token(token)
     buffer = build_receipt_image(registration)
     response = HttpResponse(buffer.getvalue(), content_type='image/png')
     response['Content-Disposition'] = f'attachment; filename="receipt-{registration.trxid}.png"'
     return response
-
-
-def ca_register(request, slug):
-    event = get_object_or_404(Event, slug=slug)
-    batch = event.ca_batches.filter(is_open=True).first()
-
-    if batch is None:
-        return render(request, 'events/ca_closed.html', {'event': event})
-
-    if request.method == 'POST':
-        form = CampusAmbassadorForm(request.POST, request.FILES, batch=batch)
-        if form.is_valid():
-            applicant = form.save(commit=False)
-            applicant.batch = batch
-            applicant.save()
-            return redirect('event_detail', slug=event.slug)
-    else:
-        form = CampusAmbassadorForm(batch=batch)
-
-    context = {'event': event, 'batch': batch, 'form': form}
-    return render(request, 'events/ca_register.html', context)

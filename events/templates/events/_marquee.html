@@ -1,0 +1,17 @@
+<div class="marquee" role="group" aria-label="{{ label }}">
+    <div class="marquee__track {% if direction == 'right' %}animate-marquee-reverse{% else %}animate-marquee{% endif %}">
+        <div class="marquee__group">
+            {% for item in items %}
+            <div class="marquee-item">{{ item }}</div>
+            {% endfor %}
+        </div>
+        <!-- Exact duplicate of the group above — required for the seamless loop trick
+             (the track animates exactly -50%, so this copy slides into view as the
+             first one slides out). aria-hidden since it's a visual-only duplicate. -->
+        <div class="marquee__group" aria-hidden="true">
+            {% for item in items %}
+            <div class="marquee-item">{{ item }}</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
