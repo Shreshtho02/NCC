@@ -76,6 +76,15 @@
             menu.classList.toggle('hidden');
             toggle.setAttribute('aria-expanded', isOpen);
         });
+        
+        const nav = document.querySelector('nav');
+        const setNavHeight = () => {
+            document.documentElement.style.setProperty('--nav-h', `${nav.offsetHeight}px`);
+        };
+        setNavHeight();
+        window.addEventListener('resize', setNavHeight);
+        // Nav height can change when the mobile menu opens/closes or fonts finish loading
+        new ResizeObserver(setNavHeight).observe(nav);
     </script>
 
 </body>

@@ -1,15 +1,84 @@
 {% extends "main/base.html" %}
 
-{% block title %}Home Page{% endblock %}
+{% block title %}GSCCC — Home{% endblock %}
 
 {% block content %}
-    <div class="flex flex-col-reverse md:flex-row items-center justify-around gap-8 px-6 py-4 md:py-24">
-        <div class="flex items-center text-center md:text-left">
-            <p class="text-[clamp(1rem,3vw,1.5rem)] leading-snug">
-                <span class="block font-extrabold text-[clamp(2rem,7vw,4.5rem)]">Govt.<br>Science College</span><br>
-                <span class="font-silt font-light">Cultural Club</span>
+
+<section class="px-6 md:px-16 pt-10 pb-16 md:py-24 max-w-6xl mx-auto">
+    <div class="flex flex-col md:flex-row items-start justify-between gap-10">
+        <div class="flex-1 max-w-2xl">
+            <h1 class="font-grotesk font-bold text-4xl md:text-6xl leading-snug text-text">
+                The stage, the page,<br>and everything between.
+            </h1>
+            <p class="font-silt text-2xl text-accent mt-2">— since the college had a stage worth using</p>
+            <p class="text-text-muted mt-6 text-lg font-normal leading-relaxed">
+                GSCCC organizes the performances, competitions, and creative events
+                that make up Government Science College's cultural life — run
+                entirely by students.
             </p>
+            <div class="flex flex-col sm:flex-row gap-4 mt-8">
+                <a href="{% url 'event_detail' 'ncc' %}"
+                   class="bg-accent text-white font-semibold px-6 py-3 rounded-xl text-center hover:opacity-90 transition">
+                    See NCC 2026
+                </a>
+                <a href="{% url 'event_list' %}"
+                   class="border border-text-muted/40 text-text px-6 py-3 rounded-xl text-center hover:border-accent hover:text-accent transition">
+                    Browse all events
+                </a>
+            </div>
         </div>
-        <img src="/media/logo/logo.webp" alt="logo" class="w-32 md:w-48 h-auto">
+
+        <img src="/media/logo/logo.webp" alt="GSCCC logo"
+             class="w-28 md:w-40 h-auto opacity-90 self-center md:self-start">
     </div>
+</section>
+
+<section class="border-t border-text-muted/15">
+    <div class="max-w-6xl mx-auto px-6 md:px-16 py-10 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-text-muted/15">
+        <div class="py-6 md:py-0 md:px-6 first:pl-0">
+            <h3 class="font-grotesk font-semibold text-text text-lg">Stage &amp; Performance</h3>
+            <p class="text-text-muted text-sm mt-2 font-normal">Drama, music, and dance — competitive and open-floor.</p>
+        </div>
+        <div class="py-6 md:py-0 md:px-6">
+            <h3 class="font-grotesk font-semibold text-text text-lg">Words &amp; Ideas</h3>
+            <p class="text-text-muted text-sm mt-2 font-normal">Debate, recitation, and writing competitions.</p>
+        </div>
+        <div class="py-6 md:py-0 md:px-6 last:pr-0">
+            <h3 class="font-grotesk font-semibold text-text text-lg">Visual &amp; Craft</h3>
+            <p class="text-text-muted text-sm mt-2 font-normal">Photography, fine arts, and design showcases.</p>
+        </div>
+    </div>
+</section>
+
+<section class="px-6 md:px-16 py-12 md:py-16 max-w-6xl mx-auto"
+         {% if flagship %}style="--event-accent: {{ flagship.primary_color }};"{% endif %}>
+    <div class="bg-surface rounded-2xl p-6 md:p-10 border {% if flagship %}border-[var(--event-accent)]/40{% else %}border-text-muted/20{% endif %} flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div>
+            <p class="text-text-muted text-sm font-medium">Flagship event</p>
+            {% if flagship %}
+                <h2 class="font-grotesk font-bold text-2xl md:text-3xl text-text mt-1">{{ flagship.name }}</h2>
+                <p class="text-[var(--event-accent)] font-medium mt-2">
+                    {{ flagship.date }} · Government Science College, Tejgaon
+                </p>
+            {% else %}
+                <h2 class="font-grotesk font-bold text-2xl md:text-3xl text-text mt-1">
+                    2nd National Cultural Carnival
+                </h2>
+                <p class="text-accent font-medium mt-2">Nov 26–28, 2026 · Government Science College, Tejgaon</p>
+            {% endif %}
+        </div>
+        <a href="{% if flagship %}{% url 'event_detail' flagship.slug %}{% else %}{% url 'event_list' %}{% endif %}"
+           class="shrink-0 {% if flagship %}bg-[var(--event-accent)]{% else %}bg-accent{% endif %} text-white font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition">
+            View details
+        </a>
+    </div>
+</section>
+
+<section class="border-t border-text-muted/15">
+    <div class="max-w-6xl mx-auto px-6 md:px-16 py-8 flex flex-col md:flex-row items-center justify-between gap-3">
+        <p class="text-text-muted text-sm font-normal">Run by students, for students.</p>
+        <a href="#" class="text-text text-sm hover:text-accent transition">Meet the committee →</a>
+    </div>
+</section>
+
 {% endblock %}

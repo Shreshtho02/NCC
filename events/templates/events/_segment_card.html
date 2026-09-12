@@ -1,29 +1,29 @@
 <article class="ticket-card" style="--card-accent: var(--event-accent);">
+    {% if segment.icon_image %}
     <span class="ticket-card__icon-bg" aria-hidden="true">
-        {% if segment.icon_image %}
-            <img src="{{ segment.icon_image.url }}" alt="">
-        {% else %}
-            {% include "events/_segment_icon.html" with icon=segment.icon %}
-        {% endif %}
+        <img src="{{ segment.icon_image.url }}" alt="">
     </span>
+    {% endif %}
     <div class="ticket-card__body">
-        <div class="ticket-card__meta">
-            <span class="ticket-card__icon-chip" aria-hidden="true">
-                {% if segment.icon_image %}
-                    <img src="{{ segment.icon_image.url }}" alt="">
-                {% else %}
-                    {% include "events/_segment_icon.html" with icon=segment.icon %}
-                {% endif %}
-            </span>
-        </div>
         <h3 class="ticket-card__title">{{ segment.name }}</h3>
+
+        {% if segment.is_group %}
         <p class="ticket-card__detail">
-            {% if segment.is_group %}
-                Team{% if segment.team_size %} of {{ segment.team_size }}{% endif %}{% if segment.group_label %} · {{ segment.group_label }}{% endif %}
-            {% else %}
-                {{ segment.subcategories|default:"Solo entry" }}
-            {% endif %}
+            Team{% if segment.team_size %} of {{ segment.team_size }}{% endif %}{% if segment.group_label %} · {{ segment.group_label }}{% endif %}
         </p>
+        {% else %}
+            {% with options=segment.get_subcategory_options %}
+            {% if options %}
+            <div class="ticket-card__tags">
+                {% for option in options %}
+                <span class="ticket-card__tag">{{ option }}</span>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="ticket-card__detail">Solo entry</p>
+            {% endif %}
+            {% endwith %}
+        {% endif %}
     </div>
     <div class="ticket-card__tear" aria-hidden="true"></div>
     <div class="ticket-card__footer">

@@ -3,7 +3,10 @@ from django.db import models
 from django.utils.text import slugify
 from colorfield.fields import ColorField
 from django.core.exceptions import ValidationError
-from datetime import datetime
+from datetime import datetime, timedelta
+from urllib.parse import urlencode
+from django.utils.text import Truncator
+
 current_year = datetime.now().year
 
 def banner_renamer(instance,file):
@@ -35,9 +38,31 @@ class Event(models.Model):
     primary_color = ColorField(default="#FFFF00")
     status = models.CharField(max_length=10, choices=STATUS, default='upcoming')
     date = models.DateField()
+    facebook_url = models.URLField(blank=True, help_text="Link to the event's Facebook page/post, if any.")
 
     def __str__(self):
         return self.name
+
+    def get_eligibility_range(self):
+        eligibilities = list(self.eligibilities.all())
+        if not eligibilities:
+            return None
+        start_code = min(e.start for e in eligibilities)
+        end_code = max(e.end for e in eligibilities)
+        choices = dict(Eligibility.CLASS_CHOICES)
+        return {'start': choices[start_code], 'end': choices[end_code]}
+
+    def google_calendar_url(self):
+        start = self.date.strftime('%Y%m%d')
+        end = (self.date + timedelta(days=1)).strftime('%Y%m%d')
+        summary = Truncator(self.description).chars(150)
+        params = {
+            'action': 'TEMPLATE',
+            'text': self.name,
+            'dates': f'{start}/{end}',
+            'details': summary,
+        }
+        return f'https://calendar.google.com/calendar/render?{urlencode(params)}'
 
 class Eligibility(models.Model):
     CLASS_CHOICES = [
@@ -53,7 +78,7 @@ class Eligibility(models.Model):
         ('c10', 'Class 10'),
         ('c11', 'Class 11'),
         ('c12', 'Class 12'),
-        ('c13', 'This year HSC Batch')
+        ('c13', f'HSC {current_year}')
     ]
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='eligibilities')
     name = models.CharField(max_length=100)

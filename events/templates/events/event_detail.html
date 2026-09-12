@@ -5,78 +5,139 @@
 {% block content %}
 <div style="--event-accent: {{ event.primary_color }};">
 
-<section class="relative overflow-hidden border-b-[3px] border-paper px-6 md:px-16 pt-16 pb-24">
+    <section class="hero-section relative overflow-hidden border-b-[3px] border-paper px-6 md:px-16 pt-16 pb-24" id="hero">
 
-    <span class="absolute top-4 left-4 font-mono text-paper/25 text-lg">+</span>
-    <span class="absolute top-4 right-4 font-mono text-paper/25 text-lg">+</span>
-    <span class="absolute bottom-4 left-4 font-mono text-paper/25 text-lg">+</span>
-
-    <span class="pointer-events-none select-none absolute -top-10 -left-4 md:-left-10 font-display font-black leading-none text-paper/5 text-[32vw]">
-        2
-    </span>
-
-    <div class="pointer-events-none absolute inset-0 hero-glow"></div>
-
-    <div class="relative flex flex-col gap-y-[2.5rem] lg:grid lg:grid-cols-[1.1fr_1fr] lg:grid-rows-2 lg:gap-x-14 lg:items-end">
-
-        <div class="relative z-10 lg:col-start-1 lg:row-start-1">
-            <p class="font-body text-xs uppercase tracking-widest mb-4" style="color: var(--event-accent);">
-                {{ event.status }} — {{ event.date }}
-            </p>
-
-            <h1 class="font-display font-black uppercase leading-[0.86] tracking-tight text-[clamp(2.2rem,5.2vw,4.4rem)]">
-                <span class="block">2<sup class="text-[0.4em] align-super">nd</sup> National</span>
-                <span class="relative block bg-gradient-to-r from-[var(--event-accent)] to-[var(--color-accent-soft)] bg-clip-text text-transparent">
-                    Cultural Carnival
-                    <span aria-hidden="true" class="absolute -top-2 -right-1 text-[0.35em]" style="color: var(--color-accent-soft);">✦</span>
-                </span>
-            </h1>
-        </div>
-
-        <div class="relative lg:col-start-2 lg:row-start-1 lg:row-span-2">
-            <span class="absolute -top-5 -right-5 z-20 font-body text-xs uppercase border-2 px-3 py-2 -rotate-6 bg-ink"
-                  style="border-color: var(--event-accent); color: var(--event-accent);">
-                {{ event.date }}
-            </span>
-
-            <div class="relative rotate-[-1.5deg] border-2 border-paper/80 aspect-[128/67] overflow-hidden"
-                 style="box-shadow: 10px 10px 0 var(--event-accent);">
-                {% if event.banner %}
-                    <img src="{{ event.banner.url }}" alt="{{ event.name }} banner" class="w-full h-full object-cover">
-                {% else %}
-                    <div class="w-full h-full flex items-center justify-center font-body text-xs uppercase text-paper/70"
-                         style="background: repeating-linear-gradient(45deg,#17171a,#17171a 12px,var(--color-ink) 12px,var(--color-ink) 24px);">
-                        No banner uploaded
+        <span class="absolute top-4 left-4 font-mono text-paper/25 text-lg">+</span>
+        <span class="absolute top-4 right-4 font-mono text-paper/25 text-lg">+</span>
+        <span class="absolute bottom-4 left-4 font-mono text-paper/25 text-lg">+</span>
+    
+        <span class="pointer-events-none select-none absolute -top-10 -left-4 md:-left-10 font-display font-black leading-none text-paper/5 text-[32vw]">
+            2
+        </span>
+    
+        <div class="pointer-events-none absolute inset-0 hero-glow"></div>
+    
+        <div class="hero-slider relative" id="hero-slider" data-event-date="{{ event.date|date:'Y-m-d' }}">
+            <div class="hero-slides-container" id="hero-slides-container">
+    
+                <!-- Slide 1: Intro -->
+                <div class="hero-slide active" data-slide="0">
+                    <div class="hero-slide__copy hero-slide__copy--center">
+                        <p class="hero-eyebrow" style="color: var(--event-accent);">
+                            {{ event.status }} — {{ event.date }}
+                        </p>
+                        <h1 class="hero-title font-display font-black uppercase leading-[0.86] tracking-tight text-[clamp(2.4rem,7vw,5.5rem)]">
+                            <span class="block">2<sup class="text-[0.4em] align-super">nd</sup> National</span>
+                            <span class="relative block bg-gradient-to-r from-[var(--event-accent)] to-[var(--color-accent-soft)] bg-clip-text text-transparent">
+                                Cultural Carnival
+                                <span aria-hidden="true" class="absolute -top-2 -right-1 text-[0.35em]" style="color: var(--color-accent-soft);">✦</span>
+                            </span>
+                        </h1>
+                        <div class="hero-btns hero-btns--center">
+                            <a href="{% url 'event_register' event.slug %}">
+                                <button class="btn font-display font-bold bg-[var(--event-accent)] border-[var(--event-accent)] text-ink"
+                                        style="box-shadow: 7px 7px 0 var(--color-paper);">
+                                    Register
+                                </button>
+                            </a>
+                            <a href="#details">
+                                <button class="btn font-display font-bold" style="box-shadow: 7px 7px 0 var(--event-accent);">
+                                    Details
+                                </button>
+                            </a>
+                        </div>
                     </div>
-                {% endif %}
+                </div>
+    
+                <!-- Slide 2: Countdown -->
+                <div class="hero-slide" data-slide="1">
+                    <div class="hero-slide__copy hero-slide__copy--center">
+                        <p class="hero-eyebrow" style="color: var(--event-accent);">Countdown</p>
+                        <h2 class="hero-slide-title">Time left to kickoff</h2>
+                        <div class="hero-countdown" id="hero-countdown" aria-live="polite">
+                            <div class="hero-countdown__unit"><span class="hero-countdown__value" data-unit="days">--</span><span class="hero-countdown__label">Days</span></div>
+                            <div class="hero-countdown__unit"><span class="hero-countdown__value" data-unit="hours">--</span><span class="hero-countdown__label">Hours</span></div>
+                            <div class="hero-countdown__unit"><span class="hero-countdown__value" data-unit="minutes">--</span><span class="hero-countdown__label">Mins</span></div>
+                            <div class="hero-countdown__unit"><span class="hero-countdown__value" data-unit="seconds">--</span><span class="hero-countdown__label">Secs</span></div>
+                        </div>
+                        <p class="hero-slide-desc" id="hero-countdown-fallback" hidden>{{ event.name }} is already underway or has concluded — see you on the floor.</p>
+                    </div>
+                </div>
+    
+                <!-- Slide 3: Register CTA -->
+                <div class="hero-slide" data-slide="2">
+                    <div class="hero-slide__copy hero-slide__copy--center">
+                        <p class="hero-eyebrow" style="color: var(--event-accent);">Ready?</p>
+                        <h2 class="hero-slide-title">Reserve your spot</h2>
+                        <p class="hero-slide-desc">Pick your segments, fill in your details, and you're on the roster for {{ event.name }}.</p>
+                        <div class="hero-btns hero-btns--center">
+                            <a href="{% url 'event_register' event.slug %}">
+                                <button class="btn font-display font-bold bg-[var(--event-accent)] border-[var(--event-accent)] text-ink"
+                                        style="box-shadow: 7px 7px 0 var(--color-paper);">
+                                    Go to registration
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+    
             </div>
+    
+            <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Hero slides">
+                <button class="hero-dot active" type="button" data-goto="0" role="tab" aria-selected="true" aria-label="Slide 1"></button>
+                <button class="hero-dot" type="button" data-goto="1" role="tab" aria-selected="false" aria-label="Slide 2"></button>
+                <button class="hero-dot" type="button" data-goto="2" role="tab" aria-selected="false" aria-label="Slide 3"></button>
+            </div>
+    
+            <p class="hero-swipe-hint">Swipe</p>
+    
+            <div class="hero-cursor-nav-hint" id="hero-cursor-hint" aria-hidden="true"></div>
         </div>
-
-        <div class="flex flex-col sm:flex-row gap-4 lg:col-start-1 lg:row-start-2">
-            <a href="{% url 'event_register' event.slug %}" class="flex-1">
-                <button class="btn w-full font-display font-bold bg-[var(--event-accent)] border-[var(--event-accent)] text-ink"
-                        style="box-shadow: 7px 7px 0 var(--color-paper);">
-                    Register
-                </button>
-            </a>
-            <a href="#details" class="flex-1">
-                <button class="btn w-full font-display font-bold" style="box-shadow: 7px 7px 0 var(--event-accent);">
-                    Details
-                </button>
-            </a>
-        </div>
-
-    </div>
-</section>
+    
+    </section>
 
 <section class="px-6 md:px-16 pt-12" id="details">
-    <div class="border-2 border-paper/80 p-8">
-        <p class="font-body leading-relaxed max-w-[62ch] mb-6">
-            {{ event.description }}
-        </p>
-        <button class="btn w-full font-display font-bold" style="box-shadow: 7px 7px 0 var(--event-accent);">
-            Add to Calendar
-        </button>
+    <div class="details-panel">
+        <span class="details-panel__num" aria-hidden="true">01</span>
+        <div class="details-panel__grid">
+
+            <div class="details-panel__desc">
+                <p class="font-mono text-xs uppercase tracking-widest mb-4" style="color: var(--event-accent);">
+                    About the event
+                </p>
+                <p class="font-body leading-relaxed details-panel__text">
+                    {{ event.description }}
+                </p>
+            </div>
+
+            <div class="details-panel__side">
+                {% with elig_range=event.get_eligibility_range %}
+                {% if elig_range %}
+                <div class="eligibility-block">
+                    <p class="font-mono text-xs uppercase tracking-widest mb-3" style="color: var(--event-accent);">
+                        Eligibility
+                    </p>
+                    <div class="eligibility-range">
+                        <span class="eligibility-range__label">Open to</span>
+                        <span class="eligibility-range__value">{{ elig_range.start }}<span class="eligibility-range__dash">–</span>{{ elig_range.end }}</span>
+                    </div>
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <div class="details-panel__ctas">
+                    <a href="{{ event.google_calendar_url }}" target="_blank" rel="noopener" class="btn w-full font-display font-bold" style="box-shadow: 7px 7px 0 var(--event-accent);">
+                        Add to Google Calendar
+                    </a>
+                    {% if event.facebook_url %}
+                    <a href="{{ event.facebook_url }}" target="_blank" rel="noopener" class="btn btn-facebook w-full font-display font-bold">
+                        View Event on Facebook
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
     </div>
 </section>
 
@@ -107,6 +168,17 @@
     </div>
     {% endif %}
 
+    {% for group in offline_team_groups %}
+    <p class="segment-group-heading{% if not forloop.first or offline_segments %} mt-10{% endif %}">
+        {{ group.label }} <span class="segment-group-heading__tag">Offline</span>
+    </p>
+    <div class="segment-grid">
+        {% for segment in group.segments %}
+            {% include "events/_segment_card.html" with segment=segment %}
+        {% endfor %}
+    </div>
+    {% endfor %}
+
     {% if online_segments %}
     <p class="font-body text-xs uppercase tracking-widest mt-10 mb-4" style="color: var(--event-accent);">
         Online Segments
@@ -118,11 +190,11 @@
     </div>
     {% endif %}
 
-    {% for group in team_groups %}
-    <p class="font-body text-xs uppercase tracking-widest mt-10 mb-4" style="color: var(--event-accent);">
-        {{ group.label }}
+    {% for group in online_team_groups %}
+    <p class="segment-group-heading{% if not forloop.first or online_segments %} mt-10{% endif %}">
+        {{ group.label }} <span class="segment-group-heading__tag">Online</span>
     </p>
-    <div class="segment-grid mb-16">
+    <div class="segment-grid">
         {% for segment in group.segments %}
             {% include "events/_segment_card.html" with segment=segment %}
         {% endfor %}
@@ -149,4 +221,131 @@
 </section>
 
 </div>
+<script>
+(() => {
+    const slider = document.getElementById('hero-slider');
+    if (!slider) return;
+
+    const container = document.getElementById('hero-slides-container');
+    const slides = [...container.querySelectorAll('.hero-slide')];
+    const dots = [...document.getElementById('hero-dots').querySelectorAll('.hero-dot')];
+    const cursorHint = document.getElementById('hero-cursor-hint');
+    const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+    let current = 0;
+    let autoplayTimer = null;
+    const AUTOPLAY_MS = 5200;
+
+    const resetAutoplay = () => {
+        if (autoplayTimer) clearInterval(autoplayTimer);
+        autoplayTimer = setInterval(() => goToSlide(current + 1, 'right'), AUTOPLAY_MS);
+    };
+
+    function goToSlide(rawIndex, dir) {
+        const len = slides.length;
+        const next = ((rawIndex % len) + len) % len;
+        const direction = dir || (next > current ? 'right' : 'left');
+
+        slides[current].classList.remove('active', 'go-right', 'go-left');
+        slides[next].classList.add('active', direction === 'right' ? 'go-right' : 'go-left');
+
+        dots[current].classList.remove('active');
+        dots[current].setAttribute('aria-selected', 'false');
+        dots[next].classList.add('active');
+        dots[next].setAttribute('aria-selected', 'true');
+
+        current = next;
+        resetAutoplay();
+    }
+
+    dots.forEach((dot) => {
+        dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.goto, 10)));
+    });
+
+    // Touch swipe
+    let touchStartX = null;
+    container.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+    container.addEventListener('touchend', (e) => {
+        if (touchStartX === null) return;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 45) {
+            dx < 0 ? goToSlide(current + 1, 'right') : goToSlide(current - 1, 'left');
+        }
+        touchStartX = null;
+    }, { passive: true });
+
+    // Arrow keys — only while the hero is actually on screen
+    let heroInView = true;
+    if ('IntersectionObserver' in window) {
+        new IntersectionObserver(([entry]) => { heroInView = entry.isIntersecting; }, { threshold: 0.4 }).observe(slider);
+    }
+    document.addEventListener('keydown', (e) => {
+        if (!heroInView) return;
+        if (e.key === 'ArrowRight') goToSlide(current + 1, 'right');
+        if (e.key === 'ArrowLeft') goToSlide(current - 1, 'left');
+    });
+
+    // Desktop click-zone navigation + cursor hint
+    if (!isTouch) {
+        slider.addEventListener('mousemove', (e) => {
+            const overInteractive = !!e.target.closest('a, button, .hero-dot');
+            const rect = slider.getBoundingClientRect();
+            const relX = (e.clientX - rect.left) / rect.width;
+            const inLeftZone = relX < 0.28;
+            const inRightZone = relX > 0.72;
+
+            if (overInteractive || (!inLeftZone && !inRightZone)) {
+                cursorHint.classList.remove('show-prev', 'show-next');
+                slider.classList.remove('hero-hide-cursor');
+            } else {
+                slider.classList.add('hero-hide-cursor');
+                cursorHint.textContent = inLeftZone ? '‹' : '›';
+                cursorHint.classList.toggle('show-prev', inLeftZone);
+                cursorHint.classList.toggle('show-next', inRightZone);
+            }
+            cursorHint.style.left = `${e.clientX}px`;
+            cursorHint.style.top = `${e.clientY}px`;
+        });
+
+        slider.addEventListener('mouseleave', () => {
+            cursorHint.classList.remove('show-prev', 'show-next');
+            slider.classList.remove('hero-hide-cursor');
+        });
+
+        slider.addEventListener('mousedown', (e) => {
+            if (e.target.closest('a, button, .hero-dot')) return;
+            const rect = slider.getBoundingClientRect();
+            const relX = (e.clientX - rect.left) / rect.width;
+            if (relX < 0.28) goToSlide(current - 1, 'left');
+            else if (relX > 0.72) goToSlide(current + 1, 'right');
+        });
+    }
+
+    // Countdown (slide 2) — target is midnight local time on event.date
+    const countdownEl = document.getElementById('hero-countdown');
+    const fallbackEl = document.getElementById('hero-countdown-fallback');
+    const eventDateStr = slider.dataset.eventDate;
+    if (countdownEl && eventDateStr) {
+        const target = new Date(`${eventDateStr}T00:00:00`);
+        const tick = () => {
+            const diff = target - new Date();
+            if (diff <= 0) {
+                countdownEl.hidden = true;
+                fallbackEl.hidden = false;
+                clearInterval(countdownInterval);
+                return;
+            }
+            countdownEl.querySelector('[data-unit="days"]').textContent = String(Math.floor(diff / 86400000));
+            countdownEl.querySelector('[data-unit="hours"]').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+            countdownEl.querySelector('[data-unit="minutes"]').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+            countdownEl.querySelector('[data-unit="seconds"]').textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        };
+        tick();
+        var countdownInterval = setInterval(tick, 1000);
+    }
+
+    resetAutoplay();
+})();
+</script>
 {% endblock %}
+

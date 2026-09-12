@@ -79,6 +79,12 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
 }
+@media (min-width: 768px) {
+    .segment-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+    .segment-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.85rem; }
+}
 
 .ticket-card {
     position: relative;
@@ -86,15 +92,14 @@ body {
     min-height: 180px;
     flex-direction: column;
     overflow: hidden;
-    border: 2px solid var(--color-paper);
+    border: 1px solid color-mix(in oklab, var(--color-paper) 22%, transparent);
+    border-radius: 16px;
     background: var(--color-ink);
     color: var(--color-paper);
     clip-path: polygon(0 0, 100% 0, 100% 91%, 96% 100%, 0 100%);
-    transition: transform 150ms ease, box-shadow 150ms ease;
+    transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
 }
-
-.ticket-card::before,
-.ticket-card::after {
+.ticket-card::before, .ticket-card::after {
     position: absolute;
     z-index: 1;
     width: 20px;
@@ -102,49 +107,49 @@ body {
     content: "";
     background: var(--color-ink);
 }
-
-.ticket-card::before { top: -2px; left: -2px; }
-.ticket-card::after { right: -2px; bottom: -2px; }
-
-.ticket-card:hover,
-.ticket-card:focus-within {
+.ticket-card::before { top: -1px; left: -1px; }
+.ticket-card::after { right: -1px; bottom: -1px; }
+.ticket-card:hover, .ticket-card:focus-within {
     transform: translate(-6px, -6px);
-    box-shadow: 8px 8px 0 #8B5CF6;
+    border-color: var(--card-accent, var(--color-accent));
+    box-shadow: 8px 8px 0 color-mix(in oklab, var(--card-accent, #8B5CF6) 55%, transparent);
 }
 
 .ticket-card__body { position: relative; z-index: 1; padding: 1.1rem 1.3rem 0.9rem; }
 
-.ticket-card__meta {
-    display: flex;
-    min-height: 1.5rem;
-    justify-content: flex-end;
-}
-
-.ticket-card__icon-chip {
-    display: inline-flex;
-    width: 1.6rem;
-    height: 1.6rem;
-    align-items: center;
-    justify-content: center;
-    color: var(--card-accent);
-}
-.ticket-card__icon-chip svg,
-.ticket-card__icon-chip img { width: 100%; height: 100%; object-fit: contain; }
-
 .ticket-card__icon-bg {
     position: absolute;
     z-index: 0;
-    right: -1rem;
-    bottom: -1rem;
-    width: 7.5rem;
-    height: 7.5rem;
-    color: var(--card-accent);
-    opacity: 0.14;
+    right: -1.25rem;
+    bottom: -1.25rem;
+    width: 8rem;
+    height: 8rem;
+    opacity: 0.1;
     pointer-events: none;
     transform: rotate(-8deg);
 }
-.ticket-card__icon-bg svg,
 .ticket-card__icon-bg img { width: 100%; height: 100%; object-fit: contain; }
+
+.ticket-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.65rem;
+}
+.ticket-card__tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid color-mix(in oklab, var(--color-paper) 30%, transparent);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--card-accent, var(--color-accent)) 14%, transparent);
+    color: color-mix(in oklab, var(--color-paper) 85%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
 
 .ticket-card__title {
     display: -webkit-box;
@@ -216,6 +221,50 @@ body {
     font-family: var(--font-display);
     font-size: 1.35rem;
     font-weight: 900;
+}
+
+@media (min-width: 1024px) {
+    .ticket-card { min-height: 150px; }
+    .ticket-card__body { padding: 0.85rem 1rem 0.7rem; }
+    .ticket-card__title {
+        font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+        min-height: calc(1.15em * 2);
+        margin-top: 0.6rem;
+    }
+    .ticket-card__detail {
+        font-size: 0.7rem;
+        min-height: 2.1rem;
+        margin-top: 0.4rem;
+    }
+    .ticket-card__footer { padding: 0.75rem 0.9rem 0.8rem; }
+    .ticket-card__fee { font-size: 1.1rem; }
+    .ticket-card__icon-bg {
+        width: 5.5rem;
+        height: 5.5rem;
+        right: -0.75rem;
+        bottom: -0.75rem;
+    }
+}
+
+.segment-group-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--event-accent, var(--color-accent));
+}
+.segment-group-heading__tag {
+    padding: 0.15rem 0.55rem;
+    border: 1px solid color-mix(in oklab, var(--event-accent, var(--color-accent)) 55%, transparent);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    color: color-mix(in oklab, var(--color-paper) 80%, transparent);
 }
 
 /* --- Segment selector (registration form panel) ---
@@ -415,4 +464,297 @@ body {
 body {
     background-color: var(--color-ink);
     background-image: repeating-linear-gradient(45deg, rgba(244,237,226,0.05) 0 2px, transparent 2px 14px);
+}
+
+/* --- Event hero slider ---
+   Ported from the homepage slider (dots/swipe/keyboard/click-zone nav + wipe
+   transition) but reskinned to this project's ink/paper/event-accent and
+   hard-shadow language instead of the source project's red-gradient/glass look. */
+.hero-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100dvh - var(--nav-h, 76px));
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.hero-slides-container {
+    position: relative;
+    min-height: calc(100dvh - var(--nav-h, 76px) - 6rem); /* leaves room for dots/hint below */
+    display: flex;
+    align-items: center;
+}
+
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+.hero-slide.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    z-index: 2;
+}
+.hero-slide { min-height: inherit; }
+@keyframes hero-wipe-right {
+    from { clip-path: inset(0 100% 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+}
+@keyframes hero-wipe-left {
+    from { clip-path: inset(0 0 0 100%); }
+    to   { clip-path: inset(0 0 0 0); }
+}
+.hero-slide.active.go-right { animation: hero-wipe-right 0.75s ease forwards; }
+.hero-slide.active.go-left  { animation: hero-wipe-left 0.75s ease forwards; }
+@media (prefers-reduced-motion: reduce) {
+    .hero-slide.active.go-right, .hero-slide.active.go-left { animation: none; }
+}
+
+.hero-slide__grid {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-slide__copy { max-width: 640px; }
+.hero-slide__copy--center {
+    max-width: 900px;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    animation: hero-fade-up 0.6s ease both;
+    animation-delay: 0.1s;
+}
+.hero-title { animation: hero-fade-up 0.6s ease both; animation-delay: 0.2s; }
+
+.hero-slide-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.05;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    color: var(--color-paper);
+    margin-bottom: 0.9rem;
+    animation: hero-fade-up 0.6s ease both;
+    animation-delay: 0.2s;
+}
+
+.hero-slide-desc {
+    font-family: var(--font-body);
+    color: color-mix(in oklab, var(--color-paper) 70%, transparent);
+    line-height: 1.7;
+    font-size: 1rem;
+    animation: hero-fade-up 0.6s ease both;
+    animation-delay: 0.25s;
+}
+
+.hero-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    animation: hero-fade-up 0.6s ease both;
+    animation-delay: 0.35s;
+}
+.hero-btns--center { justify-content: center; }
+
+@keyframes hero-fade-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .hero-eyebrow, .hero-title, .hero-slide-title, .hero-slide-desc, .hero-btns { animation: none; }
+}
+
+.hero-countdown {
+    display: flex;
+    justify-content: center;
+    gap: 1.75rem;
+    margin-top: 1.75rem;
+    animation: hero-fade-up 0.6s ease both;
+    animation-delay: 0.3s;
+}
+.hero-countdown__unit { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
+.hero-countdown__value {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(1.8rem, 4vw, 2.75rem);
+    color: var(--color-accent-soft);
+    line-height: 1;
+}
+.hero-countdown__label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in oklab, var(--color-paper) 60%, transparent);
+}
+
+.hero-dots { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem; }
+.hero-dot {
+    inline-size: 6px;
+    block-size: 6px;
+    border-radius: 999px;
+    border: none;
+    padding: 0;
+    background: color-mix(in oklab, var(--color-paper) 40%, transparent);
+    cursor: pointer;
+    transition: inline-size 0.3s ease, background-color 0.3s ease;
+}
+.hero-dot.active { inline-size: 22px; background: var(--event-accent); }
+
+.hero-swipe-hint {
+    display: none;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: color-mix(in oklab, var(--color-paper) 50%, transparent);
+    margin-top: 0.75rem;
+    animation: hero-swipe-pulse 1.8s ease-in-out infinite;
+}
+@media (max-width: 767px) {
+    .hero-swipe-hint { display: block; }
+}
+@keyframes hero-swipe-pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
+.hero-cursor-nav-hint {
+    position: fixed;
+    z-index: 60;
+    inline-size: 72px;
+    block-size: 72px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--color-paper);
+    background: color-mix(in oklab, var(--color-ink) 55%, transparent);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    border: 2px solid var(--event-accent, var(--color-accent));
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.85);
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.hero-cursor-nav-hint.show-prev,
+.hero-cursor-nav-hint.show-next {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+.hero-hide-cursor { cursor: none; }
+
+/* --- Event description panel ---
+   Replaces the plain border-2 box: a subtle accent left-rail instead of a
+   full white border, plus a faint oversized index numeral echoing the
+   giant "2" watermark in the hero, so it still reads as "this page" rather
+   than a generic bordered <div>. */
+
+.details-panel {
+    position: relative;
+    overflow: hidden;
+    padding: 2.25rem 1.75rem;
+    border: 1px solid color-mix(in oklab, var(--color-paper) 12%, transparent);
+    border-left: 4px solid var(--event-accent, var(--color-accent));
+    background: color-mix(in oklab, var(--color-ink) 97%, var(--event-accent, var(--color-accent)));
+}
+@media (min-width: 768px) {
+    .details-panel { padding: 3rem; }
+}
+
+.details-panel__num {
+    position: absolute;
+    top: -1.25rem;
+    right: 1rem;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 7rem;
+    line-height: 1;
+    color: color-mix(in oklab, var(--color-paper) 5%, transparent);
+    pointer-events: none;
+    user-select: none;
+}
+
+.details-panel__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+@media (min-width: 1024px) {
+    .details-panel__grid { grid-template-columns: 1.4fr 1fr; gap: 3rem; }
+}
+
+.details-panel__text {
+    max-width: 62ch;
+    color: color-mix(in oklab, var(--color-paper) 88%, transparent);
+}
+
+.details-panel__side {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.eligibility-range {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.5rem 1.25rem;
+    border: 2px solid var(--event-accent, var(--color-accent));
+    background: color-mix(in oklab, var(--event-accent, var(--color-accent)) 10%, transparent);
+}
+.eligibility-range__label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in oklab, var(--color-paper) 65%, transparent);
+}
+.eligibility-range__value {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    line-height: 1.05;
+    color: var(--event-accent, var(--color-paper));
+    /* text-transform: uppercase; */
+}
+.eligibility-range__dash {
+    margin: 0 0.35rem;
+    color: color-mix(in oklab, var(--color-paper) 50%, transparent);
+}
+
+.details-panel__ctas {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: auto;
+}
+
+.btn-facebook {
+    background: #2e507c;
+    border-color: #1e3757;
+    color: #fff;
+    box-shadow: 7px 7px 0 var(--color-paper);
+    text-decoration: none;
 }

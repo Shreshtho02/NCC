@@ -15,19 +15,27 @@ def event_detail(request, slug):
 
     offline_segments = [s for s in segments if not s.is_group and s.format == 'offline']
     online_segments = [s for s in segments if not s.is_group and s.format == 'online']
+
     team_segments = [s for s in segments if s.is_group]
-    team_groups = [
+    offline_team_groups = [
         {'label': label or 'Team Segments', 'segments': list(group)}
-        for label, group in groupby(team_segments, key=lambda s: s.group_label)
+        for label, group in groupby(
+            (s for s in team_segments if s.format == 'offline'), key=lambda s: s.group_label,
+        )
+    ]
+    online_team_groups = [
+        {'label': label or 'Team Segments', 'segments': list(group)}
+        for label, group in groupby(
+            (s for s in team_segments if s.format == 'online'), key=lambda s: s.group_label,
+        )
     ]
 
     context = {
         'event': event,
         'offline_segments': offline_segments,
+        'offline_team_groups': offline_team_groups,
         'online_segments': online_segments,
-        'team_groups': team_groups,
-        # Placeholders until a real Sponsor/Partner model exists — swap these
-        # two lines for a queryset later, the template/marquee don't need to change.
+        'online_team_groups': online_team_groups,
         'sponsor_placeholders': [f'Sponsor {i}' for i in range(1, 7)],
         'partner_placeholders': [f'Partner {i}' for i in range(1, 5)],
     }

@@ -56,7 +56,9 @@ class EventDetailTests(TestCase):
         self.assertContains(response, 'Offline')
         self.assertContains(response, 'Online')
         self.assertContains(response, '৳150')
-        self.assertContains(response, 'Mobile, DSLR')
+        self.assertContains(response, 'ticket-card__tag')
+        self.assertContains(response, 'Mobile')
+        self.assertContains(response, 'DSLR')
         self.assertContains(response, 'Team of 5 · Cultural Fusion')
 
     def test_campus_ambassador_urls_and_models_are_removed(self):
